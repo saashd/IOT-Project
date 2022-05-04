@@ -493,6 +493,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
     private void OpenLoadCSV() {
         Intent intent = new Intent(getContext(), LoadCSV.class);
+        intent.putExtra("fileName", fileName);
         startActivity(intent);
     }
 

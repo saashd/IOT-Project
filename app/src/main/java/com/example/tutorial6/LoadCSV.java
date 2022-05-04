@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -21,15 +22,22 @@ import com.opencsv.CSVReader;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import java.util.List;
 
 
 public class LoadCSV extends AppCompatActivity {
+    String fileName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        fileName = getIntent().getStringExtra("fileName");
+
         setContentView(R.layout.activity_load_csv);
         Button BackButton = (Button) findViewById(R.id.button_back);
         LineChart lineChart = (LineChart) findViewById(R.id.line_chart);
@@ -42,42 +50,46 @@ public class LoadCSV extends AppCompatActivity {
         lineDataSetAxisZ.setColors(Color.BLUE);
 
         ArrayList<String[]> csvData = new ArrayList<>();
+        try {
 
-        csvData = CsvRead("/storage/self/primary/Terminal/new.csv");
-        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+            csvData = CsvRead("/storage/self/primary/Terminal/" + fileName + ".csv");
+            ArrayList<ILineDataSet> dataSets = new ArrayList<>();
 
-        dataSets.add(lineDataSetAxisX);
-        dataSets.add(lineDataSetAxisY);
-        dataSets.add(lineDataSetAxisZ);
+            dataSets.add(lineDataSetAxisX);
+            dataSets.add(lineDataSetAxisY);
+            dataSets.add(lineDataSetAxisZ);
 
-        LineData data = new LineData(dataSets);
+            LineData data = new LineData(dataSets);
 
-        for (int i = 5; i < csvData.size(); i++) {
-            String[] parts = csvData.get(i);
-            data.addEntry(new Entry(Float.parseFloat(parts[0]) / 1000, Float.parseFloat(parts[1])), 0);
-            lineDataSetAxisX.notifyDataSetChanged(); // let the data know a dataSet changed
-            data.addEntry(new Entry(Float.parseFloat(parts[0]) / 1000, Float.parseFloat(parts[2])), 1);
-            lineDataSetAxisY.notifyDataSetChanged(); // let the data know a dataSet changed
-            data.addEntry(new Entry(Float.parseFloat(parts[0]) / 1000, Float.parseFloat(parts[3])), 2);
-            lineDataSetAxisZ.notifyDataSetChanged(); // let the data know a dataSet changed
+            for (int i = 5; i < csvData.size(); i++) {
+                String[] parts = csvData.get(i);
+                data.addEntry(new Entry(Float.parseFloat(parts[0]) / 1000, Float.parseFloat(parts[1])), 0);
+                lineDataSetAxisX.notifyDataSetChanged(); // let the data know a dataSet changed
+                data.addEntry(new Entry(Float.parseFloat(parts[0]) / 1000, Float.parseFloat(parts[2])), 1);
+                lineDataSetAxisY.notifyDataSetChanged(); // let the data know a dataSet changed
+                data.addEntry(new Entry(Float.parseFloat(parts[0]) / 1000, Float.parseFloat(parts[3])), 2);
+                lineDataSetAxisZ.notifyDataSetChanged(); // let the data know a dataSet changed
 
+            }
+
+            //        Set dataset labels that appear in the bottom of the chart
+            Legend l = lineChart.getLegend();
+            l.setTextSize(15f);
+            l.setTextColor(Color.BLACK);
+            l.setForm(Legend.LegendForm.LINE);
+            XAxis xval = lineChart.getXAxis();
+
+            xval.setDrawLabels(true);
+            xval.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
+            xval.setGranularity(1f);
+
+            lineChart.setData(data);
+            lineChart.notifyDataSetChanged(); // let the chart know it's data changed
+            lineChart.invalidate();
+        } catch (Exception e) {
+            Toast.makeText(this, "ERROR", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
         }
-
-        //        Set dataset labels that appear in the bottom of the chart
-        Legend l = lineChart.getLegend();
-        l.setTextSize(15f);
-        l.setTextColor(Color.BLACK);
-        l.setForm(Legend.LegendForm.LINE);
-        XAxis xval = lineChart.getXAxis();
-
-        xval.setDrawLabels(true);
-        xval.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
-        xval.setGranularity(1f);
-
-        lineChart.setData(data);
-        lineChart.notifyDataSetChanged(); // let the chart know it's data changed
-        lineChart.invalidate();
-
 
         BackButton.setOnClickListener(new View.OnClickListener() {
             @Override
