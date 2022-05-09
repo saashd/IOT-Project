@@ -7,16 +7,19 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +61,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private String deviceAddress;
     private String selectedMode;
     private String fileName;
+    private String numOfSteps;
     private Boolean isReceiving = true;
 
     private List<String[]> receivedData = new ArrayList<>();
@@ -94,6 +99,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         deviceAddress = getArguments().getString("device");
         selectedMode = getArguments().getString("mode");
         fileName = getArguments().getString("fileName");
+        numOfSteps = getArguments().getString("numOfSteps");
 
     }
 
@@ -214,23 +220,49 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         mpLineChart.invalidate();
 
         Button buttonReset = (Button) view.findViewById(R.id.resetButton);
-        Button buttonCsvShow = (Button) view.findViewById(R.id.button2);
         Button buttonSaveData = (Button) view.findViewById(R.id.saveButton);
         Button buttonStop = (Button) view.findViewById(R.id.stopButton);
 
         buttonStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                isReceiving = false;
+                pauseReceiving();
 
             }
         });
 
+
         buttonSaveData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveToCsv();
-                reset();
+                pauseReceiving();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                final EditText input = new EditText(getActivity());
+                input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                input.setHint("Update Number of Steps");
+
+                String currSteps = numOfSteps;
+                builder.setMessage("Current Number of Steps: " + currSteps)
+                        .setView(input)
+                        .setCancelable(false)
+                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                numOfSteps = input.getText().toString();
+                                saveToCsv();
+                                reset();
+                                dialog.cancel();
+                            }
+                        })
+                        .setNegativeButton("Return", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                //  Action for 'NO' Button
+                                dialog.cancel();
+                            }
+                        });
+                //Creating dialog box
+                AlertDialog alert = builder.create();
+                alert.show();
+
             }
         });
 
@@ -240,14 +272,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 Toast.makeText(getContext(), "Reset", Toast.LENGTH_SHORT).show();
             }
 
-        });
-
-        buttonCsvShow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OpenLoadCSV();
-
-            }
         });
 
         return view;
@@ -265,6 +289,12 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         if (id == R.id.clear) {
             receiveText.setText("");
             return true;
+        } else if (id == R.id.load2) {
+            pauseReceiving();
+            Fragment fragment = new CsvFragment();
+            getFragmentManager().beginTransaction().replace(R.id.fragment, fragment, "terminal").addToBackStack(null).commit();
+            return true;
+
         } else if (id == R.id.newline) {
             String[] newlineNames = getResources().getStringArray(R.array.newline_names);
             String[] newlineValues = getResources().getStringArray(R.array.newline_values);
@@ -352,28 +382,28 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
             String currentDateandTime = sdf.format(new Date());
 
-            File file = new File("/storage/self/primary/Terminal/");
+            File file = new File("/storage/self/primary/IOT/");
             file.mkdirs();
-            String csv = "/storage/self/primary/Terminal/" + fileName + ".csv";
+            String csv = "/storage/self/primary/IOT/" + fileName + ".csv";
 
-            File csvFile = new File("/storage/self/primary/Terminal/", fileName + ".csv");
-            if (!csvFile.exists()) {
-                CSVWriter csvWriter = new CSVWriter(new FileWriter(csv, true));
-                String row1[] = new String[]{"NAME:", fileName + ".csv"};
-                csvWriter.writeNext(row1);
-                String row2[] = new String[]{"EXPERIMENT TIME:", currentDateandTime};
-                csvWriter.writeNext(row2);
-                String row3[] = new String[]{"ACTIVITY TYPE:", selectedMode};
-                csvWriter.writeNext(row3);
-                String row4[] = new String[]{"   "};
-                csvWriter.writeNext(row4);
-                String row5[] = new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"};
-                csvWriter.writeNext(row5);
-                csvWriter.close();
-            }
-            CSVWriter csvWriter = new CSVWriter(new FileWriter(csv, true));
-            for (String[] row : receivedData) {//               String row[] = new String[]{String.valueOf(Integer.valueOf(parts[3]) / 1000), parts[0], parts[1], parts[2]};
-                csvWriter.writeNext(row);
+//            File csvFile = new File("/storage/self/primary/Terminal/", fileName + ".csv");
+//            if (!csvFile.exists()) {
+//            }
+            CSVWriter csvWriter = new CSVWriter(new FileWriter(csv, false));
+            String[] row = new String[]{"NAME:", fileName + ".csv"};
+            csvWriter.writeNext(row);
+            row = new String[]{"EXPERIMENT TIME:", currentDateandTime};
+            csvWriter.writeNext(row);
+            row = new String[]{"ACTIVITY TYPE:", selectedMode};
+            csvWriter.writeNext(row);
+            row = new String[]{"COUNT OF ACTUAL STEPS", numOfSteps};
+            csvWriter.writeNext(row);
+            row = new String[]{"   "};
+            csvWriter.writeNext(row);
+            row = new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"};
+            csvWriter.writeNext(row);
+            for (String[] r : receivedData) {
+                csvWriter.writeNext(r);
             }
             csvWriter.close();
             Toast.makeText(getContext(), "Data Saved", Toast.LENGTH_SHORT).show();
@@ -401,6 +431,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         while (set3.removeLast()) {
         }
 
+    }
+
+    private void pauseReceiving() {
+        isReceiving = false;
+        Toast.makeText(getContext(), "Data Receiving Paused", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -494,6 +529,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private void OpenLoadCSV() {
         Intent intent = new Intent(getContext(), LoadCSV.class);
         intent.putExtra("fileName", fileName);
+        intent.putExtra("numOfSteps", numOfSteps);
         startActivity(intent);
     }
 

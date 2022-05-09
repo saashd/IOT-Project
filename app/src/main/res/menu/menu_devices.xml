@@ -3,4 +3,7 @@
     <item
         android:id="@+id/bt_settings"
         android:title="Bluetooth settings" />
+    <item
+        android:id="@+id/load1"
+        android:title="Load from CSV"/>
 </menu>

@@ -13,7 +13,10 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.AppCompat">
+        <activity
+            android:name=".CsvFragment"
+            android:exported="false" />
         <activity android:name=".LoadCSV">
             <intent-filter>
                 <action android:name="android.intent.action" />

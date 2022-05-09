@@ -31,6 +31,7 @@ public class SelectModeFragment extends Fragment {
     Button startButton;
     String selectedMode;
     EditText textFileName;
+    EditText numOfSteps;
     private String deviceAddress;
 
 
@@ -70,6 +71,7 @@ public class SelectModeFragment extends Fragment {
         });
 
         textFileName = (EditText) view.findViewById(R.id.textFileName);
+        numOfSteps = (EditText) view.findViewById(R.id.numOfSteps);
         startButton = (Button) view.findViewById(R.id.startButton);
 
 
@@ -83,12 +85,18 @@ public class SelectModeFragment extends Fragment {
 
 
                 String currFileName = textFileName.getText().toString();
-                if (currFileName.matches("")) {
-                    Toast.makeText(getContext(), "You did not enter a fille name", Toast.LENGTH_SHORT).show();
+                String currSteps = numOfSteps.getText().toString();
+                if (currFileName.matches("") ) {
+                    Toast.makeText(getContext(), "Please enter  file name", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (currSteps.matches("") ) {
+                    Toast.makeText(getContext(), "Please enter number of steps", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 args.putString("fileName", currFileName);
+                args.putString("numOfSteps", currSteps);
                 Fragment fragment = new TerminalFragment();
                 fragment.setArguments(args);
                 getFragmentManager().beginTransaction().replace(R.id.fragment, fragment, "terminal").addToBackStack(null).commit();

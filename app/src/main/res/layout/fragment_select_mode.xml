@@ -17,11 +17,21 @@
         android:id="@+id/textFileName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="150dp"
         android:ems="10"
+        android:hint="Enter File Name"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/numOfSteps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="100dp"
-        android:inputType="textPersonName"
-        android:hint="Insert File Name" />
+        android:ems="10"
+        android:hint="Enter Number of Steps"
+        android:inputType="number" />
 
     <Button
         android:id="@+id/startButton"
@@ -29,7 +39,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginHorizontal="80dp"
+        android:background="@color/colorPrimary"
+        android:text="Start Rec."
 
-        android:text="Start Rec." />
+        android:textColor="@android:color/white" />
+
+
 
 </FrameLayout>

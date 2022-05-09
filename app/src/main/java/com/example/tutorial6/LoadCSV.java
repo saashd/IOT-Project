@@ -1,6 +1,10 @@
 package com.example.tutorial6;
 // Like Tutorial3 with tiny changes in "back" button.
 
+
+// No need in this Activity. All logic moved to CsvFragment.
+// File not deleted only for Yara and Alon convenience
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -29,7 +33,8 @@ import java.util.List;
 
 
 public class LoadCSV extends AppCompatActivity {
-    String fileName;
+    private String fileName;
+    private String numOfSteps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +42,7 @@ public class LoadCSV extends AppCompatActivity {
 
 
         fileName = getIntent().getStringExtra("fileName");
+        numOfSteps = getIntent().getStringExtra("numOfSteps");
 
         setContentView(R.layout.activity_load_csv);
         Button BackButton = (Button) findViewById(R.id.button_back);
@@ -52,7 +58,7 @@ public class LoadCSV extends AppCompatActivity {
         ArrayList<String[]> csvData = new ArrayList<>();
         try {
 
-            csvData = CsvRead("/storage/self/primary/Terminal/" + fileName + ".csv");
+            csvData = CsvRead("/storage/self/primary/IOT/" + fileName + ".csv");
             ArrayList<ILineDataSet> dataSets = new ArrayList<>();
 
             dataSets.add(lineDataSetAxisX);
