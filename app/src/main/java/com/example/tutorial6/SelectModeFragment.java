@@ -28,7 +28,7 @@ import android.widget.Toast;
 public class SelectModeFragment extends Fragment {
 
     Spinner spinner;
-    Button startButton;
+    Button continueButton;
     String selectedMode;
     EditText textFileName;
     EditText numOfSteps;
@@ -72,13 +72,11 @@ public class SelectModeFragment extends Fragment {
 
         textFileName = (EditText) view.findViewById(R.id.textFileName);
         numOfSteps = (EditText) view.findViewById(R.id.numOfSteps);
-        startButton = (Button) view.findViewById(R.id.startButton);
+        continueButton = (Button) view.findViewById(R.id.continueButton);
 
 
-        startButton.setOnClickListener(new View.OnClickListener() {
+        continueButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Recording Started", Toast.LENGTH_SHORT).show();
-
                 Bundle args = new Bundle();
                 args.putString("mode", selectedMode);
                 args.putString("device", deviceAddress);
@@ -86,11 +84,11 @@ public class SelectModeFragment extends Fragment {
 
                 String currFileName = textFileName.getText().toString();
                 String currSteps = numOfSteps.getText().toString();
-                if (currFileName.matches("") ) {
+                if (currFileName.matches("")) {
                     Toast.makeText(getContext(), "Please enter  file name", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (currSteps.matches("") ) {
+                if (currSteps.matches("")) {
                     Toast.makeText(getContext(), "Please enter number of steps", Toast.LENGTH_SHORT).show();
                     return;
                 }

@@ -34,13 +34,13 @@
         android:inputType="number" />
 
     <Button
-        android:id="@+id/startButton"
+        android:id="@+id/continueButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginHorizontal="80dp"
         android:background="@color/colorPrimary"
-        android:text="Start Rec."
+        android:text="Continue"
 
         android:textColor="@android:color/white" />
 

@@ -62,7 +62,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private String selectedMode;
     private String fileName;
     private String numOfSteps;
-    private Boolean isReceiving = true;
+    private Boolean isReceiving = false;
 
     private List<String[]> receivedData = new ArrayList<>();
 
@@ -222,6 +222,18 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         Button buttonReset = (Button) view.findViewById(R.id.resetButton);
         Button buttonSaveData = (Button) view.findViewById(R.id.saveButton);
         Button buttonStop = (Button) view.findViewById(R.id.stopButton);
+        Button buttonStart = (Button) view.findViewById(R.id.startButton);
+
+        buttonStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Start recording if first time or if data was stopped or reset been made
+                Toast.makeText(getContext(), "Recording Started", Toast.LENGTH_SHORT).show();
+                if (!isReceiving) {
+                    isReceiving = true;
+                }
+            }
+        });
 
         buttonStop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -416,6 +428,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
     private void reset() {
         //Reset Saved Data
+        isReceiving = false;
         receivedData = new ArrayList<>();
 
         //Clear displayed graph
@@ -423,13 +436,19 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         ILineDataSet set1 = data.getDataSetByIndex(0);
         ILineDataSet set2 = data.getDataSetByIndex(1);
         ILineDataSet set3 = data.getDataSetByIndex(2);
-        data.getDataSetByIndex(0);
+        set1.removeLast();
+        set2.removeLast();
+        set3.removeLast();
         while (set1.removeLast()) {
         }
         while (set2.removeLast()) {
         }
         while (set3.removeLast()) {
+
         }
+        mpLineChart.notifyDataSetChanged();
+        mpLineChart.invalidate();
+        receiveText.setText("");
 
     }
 
