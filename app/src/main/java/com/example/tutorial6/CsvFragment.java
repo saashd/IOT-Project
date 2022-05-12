@@ -83,19 +83,16 @@ public class CsvFragment extends Fragment {
         });
 
         LineChart lineChart = (LineChart) view.findViewById(R.id.line_chart);
-
-        LineDataSet lineDataSetAxisX = new LineDataSet(new ArrayList<Entry>(), "X-axis");
-        lineDataSetAxisX.setColors(Color.RED);
-        LineDataSet lineDataSetAxisY = new LineDataSet(new ArrayList<Entry>(), "Y-axis");
-        lineDataSetAxisY.setColors(Color.GREEN);
-        LineDataSet lineDataSetAxisZ = new LineDataSet(new ArrayList<Entry>(), "Z-axis");
-        lineDataSetAxisZ.setColors(Color.BLUE);
-
-
         loadCSV.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Toast.makeText(getActivity(), selectedCSV, Toast.LENGTH_SHORT).show();
                 try {
+                    LineDataSet lineDataSetAxisX = new LineDataSet(new ArrayList<Entry>(), "X-axis");
+                    lineDataSetAxisX.setColors(Color.RED);
+                    LineDataSet lineDataSetAxisY = new LineDataSet(new ArrayList<Entry>(), "Y-axis");
+                    lineDataSetAxisY.setColors(Color.GREEN);
+                    LineDataSet lineDataSetAxisZ = new LineDataSet(new ArrayList<Entry>(), "Z-axis");
+                    lineDataSetAxisZ.setColors(Color.BLUE);
                     ArrayList<String[]> csvData = new ArrayList<>();
                     csvData = CsvRead("/storage/self/primary/IOT/" + selectedCSV);
                     ArrayList<ILineDataSet> dataSets = new ArrayList<>();
