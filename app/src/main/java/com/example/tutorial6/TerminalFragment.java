@@ -529,7 +529,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     @Override
     public void onSerialRead(byte[] data) {
         if (isReceiving) {
-            receive(data);
+            try {
+                receive(data);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
