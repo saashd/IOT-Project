@@ -1,6 +1,7 @@
 package com.example.tutorial6;
 // binds bluetooth service. Maintains the graph
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -19,7 +20,6 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,7 +41,6 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.opencsv.CSVWriter;
 
@@ -55,6 +54,36 @@ import java.util.List;
 import java.util.Locale;
 
 public class TerminalFragment extends Fragment implements ServiceConnection, SerialListener {
+
+
+    private double lastMag = 0d;
+    private double avgMag = 0d;
+    private double netMag = 0d;
+    private Integer stepCount = 0;
+    private static int SMOOTHING_WINDOW_SIZE = 20;
+
+    private float mRawAccelValues[] = new float[3];
+
+    // smoothing accelerometer signal variables
+    private float mAccelValueHistory[][] = new float[3][SMOOTHING_WINDOW_SIZE];
+    private float mRunningAccelTotal[] = new float[3];
+    private float mCurAccelAvg[] = new float[3];
+    private int mCurReadIndex = 0;
+
+    public static float mStepCounter = 0;
+    public static float mStepCounterAndroid = 0;
+    public static float mInitialStepCount = 0;
+
+    private double mGraph1LastXValue = 0d;
+    private double mGraph2LastXValue = 0d;
+
+    //peak detection variables
+    private double lastXPoint = 1d;
+    double stepThreshold = 1.0d;
+    double noiseThreshold = 2d;
+    private int windowSize = 10;
+
+    private TextView textView;
 
     private enum Connected {False, Pending, True}
 
@@ -83,10 +112,10 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     LineDataSet lineDataSetAxisX;
     LineDataSet lineDataSetAxisY;
     LineDataSet lineDataSetAxisZ;
+    LineDataSet lineDataSetAxisAcc;
 
     ArrayList<ILineDataSet> dataSets = new ArrayList<>();
     LineData data;
-
 
     /*
      * Lifecycle
@@ -100,6 +129,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         selectedMode = getArguments().getString("mode");
         fileName = getArguments().getString("fileName");
         numOfSteps = getArguments().getString("numOfSteps");
+
 
     }
 
@@ -174,6 +204,8 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_terminal, container, false);
+//        textView = view.findViewById(R.id.maintv1);
+
         receiveText = view.findViewById(R.id.receive_text);                          // TextView performance decreases with number of spans
         receiveText.setTextColor(getResources().getColor(R.color.colorRecieveText)); // set as default color to reduce number of spans
         receiveText.setMovementMethod(ScrollingMovementMethod.getInstance());
@@ -199,6 +231,9 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         lineDataSetAxisZ = new LineDataSet(emptyDataValues(), "Z-axis");
         lineDataSetAxisZ.setColors(Color.BLUE);
 
+        lineDataSetAxisAcc = new LineDataSet(emptyDataValues(), "Acc. Norm");
+        lineDataSetAxisAcc.setColors(Color.YELLOW);
+
         //        Set dataset labels that appear in the bottom of the chart
         Legend l = mpLineChart.getLegend();
         l.setTextSize(15f);
@@ -214,6 +249,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         dataSets.add(lineDataSetAxisX);
         dataSets.add(lineDataSetAxisY);
         dataSets.add(lineDataSetAxisZ);
+        dataSets.add(lineDataSetAxisAcc);
 
         data = new LineData(dataSets);
         mpLineChart.setData(data);
@@ -436,14 +472,19 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         ILineDataSet set1 = data.getDataSetByIndex(0);
         ILineDataSet set2 = data.getDataSetByIndex(1);
         ILineDataSet set3 = data.getDataSetByIndex(2);
+        ILineDataSet set4 = data.getDataSetByIndex(3);
         set1.removeLast();
         set2.removeLast();
         set3.removeLast();
+        set4.removeLast();
         while (set1.removeLast()) {
         }
         while (set2.removeLast()) {
         }
         while (set3.removeLast()) {
+
+        }
+        while (set4.removeLast()) {
 
         }
         mpLineChart.notifyDataSetChanged();
@@ -459,6 +500,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
 
     // Updates done while message received from the device
+    @SuppressLint("SetTextI18n")
     private void receive(byte[] message) {
         if (hexEnabled) {
             receiveText.append(TextUtil.toHexString(message) + '\n');
@@ -473,21 +515,47 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                     String[] parts = msg_to_save.split(",");
                     parts = clean_str(parts);
 
-                    String row[] = new String[]{String.valueOf(Integer.valueOf(parts[3]) / 1000), parts[0], parts[1], parts[2]};
+                    mRawAccelValues[0] = Float.parseFloat(parts[0]);
+                    mRawAccelValues[1] = Float.parseFloat(parts[1]);
+                    mRawAccelValues[2] = Float.parseFloat(parts[2]);
+                    float time_msec = Integer.valueOf(parts[3]);
+
+
+                    String row[] = new String[]{String.valueOf(time_msec / 1000), parts[0], parts[1], parts[2]};
                     receivedData.add(row);
 
-                    data.addEntry(new Entry(Integer.valueOf(parts[3]) / 1000, Float.parseFloat(parts[0])), 0);
+                    data.addEntry(new Entry(time_msec / 1000, mRawAccelValues[0]), 0);
                     lineDataSetAxisX.notifyDataSetChanged(); // let the data know a dataSet changed
 
-                    data.addEntry(new Entry(Integer.valueOf(parts[3]) / 1000, Float.parseFloat(parts[1])), 1);
+                    data.addEntry(new Entry(time_msec / 1000, mRawAccelValues[1]), 1);
                     lineDataSetAxisY.notifyDataSetChanged(); // let the data know a dataSet changed
 
-                    data.addEntry(new Entry(Integer.valueOf(parts[3]) / 1000, Float.parseFloat(parts[2])), 2);
+                    data.addEntry(new Entry(time_msec / 1000, mRawAccelValues[2]), 2);
                     lineDataSetAxisZ.notifyDataSetChanged(); // let the data know a dataSet changed
+
+//                    lastMag = Math.sqrt(Math.pow(mRawAccelValues[0], 2) + Math.pow(mRawAccelValues[1], 2) + Math.pow(mRawAccelValues[2], 2));
+//                    for (int i = 0; i < 3; i++) {
+//                        mRunningAccelTotal[i] = mRunningAccelTotal[i] - mAccelValueHistory[i][mCurReadIndex];
+//                        mAccelValueHistory[i][mCurReadIndex] = mRawAccelValues[i];
+//                        mRunningAccelTotal[i] = mRunningAccelTotal[i] + mAccelValueHistory[i][mCurReadIndex];
+//                        mCurAccelAvg[i] = mRunningAccelTotal[i] / SMOOTHING_WINDOW_SIZE;
+//                    }
+//                    mCurReadIndex++;
+//                    if (mCurReadIndex >= SMOOTHING_WINDOW_SIZE) {
+//                        mCurReadIndex = 0;
+//                    }
+
+//                    avgMag = Math.sqrt(Math.pow(mCurAccelAvg[0], 2) + Math.pow(mCurAccelAvg[1], 2) + Math.pow(mCurAccelAvg[2], 2));
+//
+//                    netMag = lastMag - avgMag; //removes gravity effect
+//
+//                    data.addEntry(new Entry(time_msec / 1000, (float) netMag), 3);
+//                    lineDataSetAxisAcc.notifyDataSetChanged(); // let the data know a dataSet changed
+//
+//                    textView.setText(stepCount.toString());
 
                     mpLineChart.notifyDataSetChanged(); // let the chart know it's data changed
                     mpLineChart.invalidate(); // refresh
-
 
                 }
 
@@ -504,6 +572,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             receiveText.append(TextUtil.toCaretString(msg, newline.length() != 0));
         }
     }
+
 
     private void status(String str) {
         SpannableStringBuilder spn = new SpannableStringBuilder(str + '\n');
