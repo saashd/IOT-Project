@@ -5,26 +5,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/ic_simple_shiny"
+    android:backgroundTint="@color/colorPrimaryDark"
     tools:context=".MainActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            app:theme="@style/Toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:textColor="@android:color/white"/>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <RelativeLayout
-        android:id="@+id/fragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+    <TextView
+        android:id="@+id/welcomeMessage"
+        android:layout_width="248dp"
+        android:layout_height="181dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="5dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:text="Welcome"
+        android:textColor="@color/colorPrimary"
+        android:textSize="40sp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

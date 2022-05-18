@@ -334,10 +334,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.clear) {
-            receiveText.setText("");
-            return true;
-        } else if (id == R.id.load2) {
+//        if (id == R.id.clear) {
+//            receiveText.setText("");
+//            return true;
+//        } else
+        if (id == R.id.load2) {
             pauseReceiving();
             Fragment fragment = new CsvFragment();
             getFragmentManager().beginTransaction().replace(R.id.fragment, fragment, "terminal").addToBackStack(null).commit();
