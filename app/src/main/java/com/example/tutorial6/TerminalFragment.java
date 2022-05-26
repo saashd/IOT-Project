@@ -43,6 +43,7 @@ import androidx.fragment.app.FragmentManager;
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
+import com.example.tutorial6.StepsDetections.StepsDetection;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -66,26 +67,42 @@ import java.util.Map;
 public class TerminalFragment extends Fragment implements ServiceConnection, SerialListener {
 
 
-    private Integer stepCount = 0;
-    private Map<String, List<Float>> mRawAccelValues = new HashMap<String, List<Float>>();
     private TextView displayNumOfSteps;
     private TextView displayBPM;
-    private int sumples=200;
+    private TextView displaySPO2;
+    private Integer stepCount = 0;
 
 
-    private enum Connected {False, Pending, True}
+    private Map<String, List<Float>> mRawAccelValues = new HashMap<String, List<Float>>();
+    private ArrayList<Double> magVals = new ArrayList<Double>();
+    private ArrayList<Double> magValsPos = new ArrayList<Double>();
+    private ArrayList<Double> magValsNeg = new ArrayList<Double>();
 
+
+    private double thresholdWalking = 3.0;
+    private double thresholdRunning = 10.0;
+
+    private double avgX, avgY, avgZ, avgIr, avgRed = 0;
+    private double sumRedRms, sumIrRms = 0;
+    private double ESpO2 = 100.0;
+
+    private int sumples = 200;
+    private int sumplesMag = 100;
+    private int samplingsSPO2 = 0;
+
+
+    private enum Connected {False, Pending, True;}
+
+    private SerialService service;
     private String deviceAddress;
     private String selectedMode;
     private String fileName;
     private String numOfSteps;
     private Boolean isReceiving = false;
+    private TextView receiveText;
 
     private List<String[]> receivedData = new ArrayList<>();
 
-    private SerialService service;
-
-    private TextView receiveText;
 
     private Connected connected = Connected.False;
     private boolean initialStart = true;
@@ -197,18 +214,13 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         View view = inflater.inflate(R.layout.fragment_terminal, container, false);
         displayNumOfSteps = view.findViewById(R.id.estimatedSteps);
         displayBPM = view.findViewById(R.id.bpm);
+        displaySPO2 = view.findViewById(R.id.spo);
 
         receiveText = view.findViewById(R.id.receive_text);                          // TextView performance decreases with number of spans
-        receiveText.setTextColor(
-
-                getResources().
-
-                        getColor(R.color.colorRecieveText)); // set as default color to reduce number of spans
+        receiveText.setTextColor(getResources().getColor(R.color.colorRecieveText)); // set as default color to reduce number of spans
         receiveText.setMovementMethod(ScrollingMovementMethod.getInstance());
         mpLineChart = (LineChart) view.findViewById(R.id.line_chart);
-        mpLineChart.getDescription().
-
-                setText("Time [sec]");
+        mpLineChart.getDescription().setText("Time [sec]");
 
 //        lineDataSetAxisX = new LineDataSet(emptyDataValues(), "X-axis");
 //        lineDataSetAxisX.setColors(Color.RED);
@@ -255,13 +267,13 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         Button buttonStart = (Button) view.findViewById(R.id.startButton);
 
         buttonStart.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View view) {
 
 
                 if (connected.name().equals("True")) {
                     //                Start recording if first time or if data was stopped or reset been made
-                    Toast.makeText(getContext(), "Recording Started", Toast.LENGTH_SHORT).show();
 
 //TODO: Run code only if really needed, my billing account won't make it till presentation.
 //                    MapsFragment childFragment = new MapsFragment();
@@ -271,6 +283,9 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                     if (!isReceiving) {
                         isReceiving = true;
                     }
+                    displaySPO2.setText("Calculating....");
+                    displayBPM.setText("Calculating....");
+                    Toast.makeText(getContext(), "Recording Started", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), "No device connected", Toast.LENGTH_SHORT).show();
 
@@ -309,19 +324,17 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 lay.addView(inputSteps);
                 lay.addView(inputFileName);
 
-
-                builder
-                        .setView(lay)
+                builder.setView(lay)
                         .setCancelable(false)
                         .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 numOfSteps = inputSteps.getText().toString();
                                 fileName = inputFileName.getText().toString();
-                                if (numOfSteps.matches("")) {
+                                if (fileName.matches("")) {
                                     Toast.makeText(getContext(), "Please enter  file name", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
-                                if (fileName.matches("")) {
+                                if (numOfSteps.matches("")) {
                                     Toast.makeText(getContext(), "Please enter number of steps", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
@@ -453,7 +466,8 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         receivedData = new ArrayList<>();
         stepCount = 0;
         displayNumOfSteps.setText(stepCount.toString());
-        displayBPM.setText("0");
+        displayBPM.setText("");
+        displaySPO2.setText("");
 
 
         //Clear displayed graph
@@ -490,7 +504,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
     // Updates done while message received from the device
     @RequiresApi(api = Build.VERSION_CODES.N)
-    @SuppressLint("SetTextI18n")
     private void receive(byte[] message) {
 //        if (hexEnabled) {
 //            receiveText.append(TextUtil.toHexString(message) + '\n');
@@ -510,30 +523,12 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 float yVal = Float.parseFloat(parts[1]);
                 float zVal = Float.parseFloat(parts[2]);
                 float time_msec = Float.parseFloat(parts[3]);
-                float irVal = Integer.parseInt(parts[4]);
-                float redVal = Integer.parseInt(parts[5]);
-                float bpm = Float.parseFloat(parts[6]);
 
-                if (!Python.isStarted()) {
-                    Python.start(new AndroidPlatform(getContext()));
-                }
-                Python py = Python.getInstance();
-                PyObject pyobj = py.getModule("test");
+                double rate = 0.333;
+                avgX = avgX * rate + (double) xVal * (1.0 - rate);//average val level by low pass filter
+                avgY = avgY * rate + (double) yVal * (1.0 - rate);//average val level by low pass filter
+                avgZ = avgZ * rate + (double) zVal * (1.0 - rate);//average val level by low pass filter
 
-
-
-//TODO: find way to get accurate measurements of bpm!
-                if (irVal > 50000) {
-                    timeData.add((float) (time_msec / 1000.0)); //milli sec to sec
-                    irData.add(irVal);
-                    redData.add(redVal);
-                }
-                if (timeData.size() > sumples) {
-                    PyObject obj = pyobj.callAttr("calcBPM", timeData.toArray(), irData.toArray(), redData.toArray());
-                    displayBPM.setText(obj.toString());
-                    Log.println(Log.ASSERT, "BPM", obj.toString());
-                    sumples+=100;
-                }
 
                 String row[] = new String[]{String.valueOf(time_msec / 1000.0), parts[0], parts[1], parts[2]};
                 receivedData.add(row);
@@ -545,24 +540,13 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 addVal("z", Float.parseFloat(parts[2]));
                 addVal("mag", (float) mag);
 
-                double meanMag = mRawAccelValues.get("mag").stream()
-                        .mapToDouble(d -> d)
-                        .average()
-                        .orElse(0.0);
-                double magNoG = mag - meanMag;
-
-
-                if (magNoG > 2.5) {
-                    stepCount += 1;
-                }
-                displayNumOfSteps.setText(stepCount.toString());
-
+                double magNoG = calcSteps(mag);
                 data.addEntry(new Entry(time_msec / 1000, (float) magNoG), 0);
                 lineDataSetAxisAcc.notifyDataSetChanged(); // let the data know a dataSet changed
-
                 mpLineChart.notifyDataSetChanged(); // let the chart know it's data changed
                 mpLineChart.invalidate(); // refresh
 
+                calcHealthParams(parts[4], parts[5], time_msec);
             }
 
             msg = msg.replace(TextUtil.newline_crlf, TextUtil.newline_lf);
@@ -578,7 +562,105 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         receiveText.append(TextUtil.toCaretString(msg, newline.length() != 0));
     }
 
+    private double[] lowPassFilter(int val, double avgVal, double sumRms, double frate) {
+        avgVal = avgVal * frate + (double) val * (1.0 - frate);//average val level by low pass filter
+        sumRms += (val - avgVal) * (val - avgVal); //square sum of alternate component of red level
+        return new double[]{avgVal, sumRms};
 
+    }
+
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private double calcSteps(double mag) {
+        //              Calculate Steps
+        double meanMag = mRawAccelValues.get("mag").stream()
+                .mapToDouble(d -> d)
+                .average()
+                .orElse(0.0);
+        double magNoG = mag - meanMag;
+
+        if (magNoG >= 0) {
+            magValsPos.add(magNoG);
+        } else {
+            magValsNeg.add(magNoG);
+        }
+
+
+        double thresholdPos = selectedMode.equals("Walking") ? thresholdWalking : thresholdRunning;
+        if (magValsPos.size() > sumplesMag) {
+            thresholdPos = new StepsDetection(getContext(), thresholdPos).findPeak(magValsPos);
+            Log.println(Log.ASSERT, "threshold", String.valueOf(thresholdPos));
+            sumplesMag += 100;
+        }
+        if (magNoG >= thresholdPos) {
+            stepCount += 1;
+        }
+
+
+        displayNumOfSteps.setText(stepCount.toString());
+        return magNoG;
+
+    }
+
+    private void calcHealthParams(String ir, String red, float time_msec) {
+//                Calculate SPO2
+        int irVal = Integer.parseInt(ir);
+        int redVal = Integer.parseInt(red);
+        double frate = 0.95; //low pass filter for IR/red LED value to eliminate AC component
+        avgIr = lowPassFilter(irVal, avgIr, sumIrRms, frate)[0];
+        sumIrRms = lowPassFilter(irVal, avgIr, sumIrRms, frate)[1];
+        avgRed = lowPassFilter(redVal, avgRed, sumRedRms, frate)[0];
+        sumRedRms = lowPassFilter(redVal, avgRed, sumRedRms, frate)[1];
+
+        samplingsSPO2 += 1;
+        if (samplingsSPO2 % 200 == 0) {
+            SPO2();
+            sumIrRms = 0;
+            sumRedRms = 0;
+            samplingsSPO2 = 0;
+            avgIr = 0;
+            avgRed = 0;
+            ESpO2 = 100.0;
+
+        }
+
+//                Calculate BPM
+        if (!Python.isStarted()) {
+            Python.start(new AndroidPlatform(getContext()));
+        }
+        Python py = Python.getInstance();
+        PyObject pyobj = py.getModule("test");
+
+
+        //TODO: find way to get accurate measurements of bpm!
+        if (irVal > 50000) {
+            timeData.add((float) (time_msec / 1000.0)); //milli sec to sec
+            irData.add((float) irVal);
+            redData.add((float) redVal);
+        }
+        if (timeData.size() % sumples == 0) {
+            PyObject obj = pyobj.callAttr("calcBPM", timeData.toArray(), irData.toArray(), redData.toArray());
+            Log.println(Log.ASSERT, "bpm", obj.toString());
+
+            if (40.0 < obj.toInt() && obj.toInt() < 250.0) {
+                displayBPM.setText(obj.toString());
+
+            }
+            sumples += 100;
+        }
+
+    }
+
+    private void SPO2() {
+        double R = (Math.sqrt(sumRedRms) / avgRed) / (Math.sqrt(sumIrRms) / avgIr);
+        double SpO2 = -23.3 * (R - 0.4) + 100;
+        ESpO2 = 0.7 * ESpO2 + (1.0 - 0.7) * SpO2;
+        Log.println(Log.ASSERT, "spo", String.valueOf(ESpO2));
+        if (90.0 < ESpO2 && ESpO2 < 100.0) {
+            displaySPO2.setText(String.valueOf((int) ESpO2));
+
+        }
+    }
 
 
     private void addVal(String key, Float val) {

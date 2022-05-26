@@ -1,4 +1,5 @@
 buildscript {
+
     repositories {
         // Check that you have the following line (if not, add it):
         google()  // Google's Maven repository
@@ -11,8 +12,6 @@ buildscript {
         classpath 'com.google.gms:google-services:4.3.10'
         classpath "com.android.tools.build:gradle:4.2.2"
         classpath "com.chaquo.python:gradle:12.0.0"
-
-
     }
 
 }
