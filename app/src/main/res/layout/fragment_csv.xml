@@ -43,18 +43,26 @@
         android:text="ACTIVITY TYPE:" />
 
     <TextView
-        android:id="@+id/steps"
+    android:id="@+id/steps"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginBottom="100dp"
+    android:text="COUNT OF ACTUAL STEPS:" />
+
+    <TextView
+        android:id="@+id/estimatedSteps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="100dp"
-        android:text="COUNT OF ACTUAL STEPS:" />
+        android:layout_marginBottom="75dp"
+        android:text="ESTIMATED NUMBER OF STEPS:" />
 
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/line_chart"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="350dp"
         android:layout_gravity="bottom"
         android:background="@color/white">
 

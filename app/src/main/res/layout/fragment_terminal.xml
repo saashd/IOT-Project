@@ -1,122 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
     android:orientation="vertical">
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/line_chart"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:background="@color/white" />
-
-<!--    <TextView-->
-<!--        android:id="@+id/maintv1"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:fontFamily="sans-serif-condensed"-->
-<!--        android:text="@string/steps_tracked"-->
-<!--        android:textAlignment="center"-->
-<!--        android:textAllCaps="false" />-->
-
-
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="55dp"
-
-        android:layout_marginHorizontal="15dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/startButton"
-            android:layout_width="0.0dip"
-            android:layout_height="fill_parent"
-            android:layout_marginHorizontal="30dp"
-            android:layout_weight="1.0"
-            android:background="@color/colorPrimary"
-            android:text="Start Rec."
-            android:textColor="@android:color/white" />
-
-        <Button
-            android:id="@+id/stopButton"
-            android:layout_width=".0dip"
-            android:layout_height="fill_parent"
-            android:layout_marginHorizontal="30dp"
-            android:layout_weight="1.0"
-            android:background="@color/colorPrimary"
-            android:text="Stop"
-            android:textColor="@android:color/white" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="55dp"
-        android:layout_marginHorizontal="15dp"
-        android:layout_marginVertical="15dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/saveButton"
-            android:layout_width=".0dip"
-            android:layout_height="fill_parent"
-            android:layout_marginHorizontal="30dp"
-            android:layout_weight="1.0"
-            android:background="@color/colorPrimary"
-            android:text="Save"
-            android:textColor="@android:color/white" />
-
-        <Button
-            android:id="@+id/resetButton"
-            android:layout_width="0.0dip"
-            android:layout_height="fill_parent"
-            android:layout_marginHorizontal="30dp"
-            android:layout_weight="1.0"
-            android:background="@color/colorAccent"
-            android:text="Reset"
-            android:textColor="@android:color/white" />
-
-
-    </LinearLayout>
-
-
-    <TextView
-        android:id="@+id/receive_text"
-        android:layout_width="match_parent"
-        android:layout_height="481dp"
-        android:layout_weight="1"
-        android:freezesText="true"
-        android:gravity="bottom"
-        android:scrollbars="vertical"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="?android:attr/listDivider" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/send_text"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:inputType="text|textNoSuggestions"
-            android:singleLine="true" />
-
-        <ImageButton
-            android:id="@+id/send_btn"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_send_white_24dp" />
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/custom_border"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="@string/bpm_value"
+                        android:textAlignment="center"
+                        android:textAllCaps="false" />
+
+                    <TextView
+                        android:id="@+id/bpm"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-condensed"
+                        android:textAlignment="center"
+                        android:textAllCaps="false" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="@string/spo_value"
+                        android:textAlignment="center"
+                        android:textAllCaps="false" />
+
+                    <TextView
+                        android:id="@+id/spo"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-condensed"
+                        android:textAlignment="center"
+                        android:textAllCaps="false" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-condensed"
+                android:text="@string/steps_tracked"
+                android:textAlignment="center"
+                android:textAllCaps="false" />
+
+            <TextView
+                android:id="@+id/estimatedSteps"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-condensed"
+                android:textAlignment="center"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/line_chart"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/startButton"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0.0dip"
+                    android:layout_height="fill_parent"
+                    android:layout_marginHorizontal="30dp"
+                    android:layout_weight="1.0"
+                    android:background="@color/colorPrimary"
+                    android:text="@string/startBtn"
+                    android:textColor="@android:color/white" />
+
+                <Button
+                    android:id="@+id/stopButton"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width=".0dip"
+                    android:layout_height="fill_parent"
+                    android:layout_marginHorizontal="30dp"
+                    android:layout_weight="1.0"
+                    android:background="@color/colorPrimary"
+                    android:text="@string/stopBtn"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/saveButton"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width=".0dip"
+                    android:layout_height="fill_parent"
+                    android:layout_marginHorizontal="30dp"
+                    android:layout_weight="1.0"
+                    android:background="@color/colorPrimary"
+                    android:text="@string/saveBtn"
+                    android:textColor="@android:color/white" />
+
+                <Button
+                    android:id="@+id/resetButton"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0.0dip"
+                    android:layout_height="fill_parent"
+                    android:layout_marginHorizontal="30dp"
+                    android:layout_weight="1.0"
+                    android:background="@color/colorAccent"
+                    android:text="@string/resetBtn"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/receive_text"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="10dp"
+
+            android:freezesText="true"
+            android:scrollbars="vertical"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:id="@+id/child_fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
     </LinearLayout>
 
-
-</LinearLayout>
+</ScrollView>
 

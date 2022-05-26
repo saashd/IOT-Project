@@ -22,14 +22,14 @@
         android:id="@+id/load2"
         android:title="Load from CSV"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/newline"
-        android:title="Newline"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/hex"
-        android:checkable="true"
-        android:title="HEX Mode"
-        app:showAsAction="never" />
+<!--    <item-->
+<!--        android:id="@+id/newline"-->
+<!--        android:title="Newline"-->
+<!--        app:showAsAction="never" />-->
+<!--    <item-->
+<!--        android:id="@+id/hex"-->
+<!--        android:checkable="true"-->
+<!--        android:title="HEX Mode"-->
+<!--        app:showAsAction="never" />-->
 
 </menu>

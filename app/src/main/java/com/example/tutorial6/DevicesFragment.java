@@ -1,5 +1,4 @@
 package com.example.tutorial6;
-// fragment where we chose the device
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -19,11 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.chaquo.python.PyObject;
-import com.chaquo.python.Python;
-import com.chaquo.python.android.AndroidPlatform;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,22 +41,9 @@ public class DevicesFragment extends ListFragment {
             public View getView(int position, View view, @NonNull ViewGroup parent) {
                 BluetoothDevice device = listItems.get(position);
 
-                //                TODO: remove this. Only for testing
-                if (!Python.isStarted()) {
-                    Python.start(new AndroidPlatform(getContext()));
-                }
-
-                Python py = Python.getInstance();
-                PyObject pyobj = py.getModule("test");
-                int[] data = new int[3];
-                data = new int[]{6, 2, 3};
-                PyObject obj = pyobj.callAttr("main", data);
 
                 if (view == null)
                     view = getActivity().getLayoutInflater().inflate(R.layout.device_list_item, parent, false);
-
-//                TODO: remove this. Only for testing
-                Toast.makeText(getContext(), obj.toString(), Toast.LENGTH_SHORT).show();
 
                 TextView text1 = view.findViewById(R.id.text1);
                 TextView text2 = view.findViewById(R.id.text2);

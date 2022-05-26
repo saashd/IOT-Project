@@ -35,9 +35,7 @@ public class CsvFragment extends Fragment {
     Spinner spinner;
     String selectedCSV;
     String[] filenames;
-    String fileDate;
-    String activityType;
-    String totSteps;
+
 
     /*
      * Lifecycle
@@ -60,6 +58,7 @@ public class CsvFragment extends Fragment {
         TextView date = (TextView) view.findViewById(R.id.date);
         TextView type = (TextView) view.findViewById(R.id.type);
         TextView steps = (TextView) view.findViewById(R.id.steps);
+        TextView estimatedSteps = (TextView) view.findViewById(R.id.estimatedSteps);
 
         //Get names of all files in IOT directory
         getCSVFiles();
@@ -105,9 +104,10 @@ public class CsvFragment extends Fragment {
                     date.setText("EXPERIMENT TIME: " + csvData.get(1)[1]);
                     type.setText("ACTIVITY TYPE: " + csvData.get(2)[1]);
                     steps.setText("COUNT OF ACTUAL STEPS: " + csvData.get(3)[1]);
+                    estimatedSteps.setText("ESTIMATED NUMBER OF STEPS: " + csvData.get(4)[1]);
 
 
-                    for (int i = 6; i < csvData.size(); i++) {
+                    for (int i = 7; i < csvData.size(); i++) {
                         String[] parts = csvData.get(i);
                         data.addEntry(new Entry(Float.parseFloat(parts[0]) / 1000, Float.parseFloat(parts[1])), 0);
                         lineDataSetAxisX.notifyDataSetChanged(); // let the data know a dataSet changed

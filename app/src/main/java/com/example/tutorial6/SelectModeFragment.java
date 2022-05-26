@@ -1,18 +1,22 @@
 package com.example.tutorial6;
 
+import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,8 +28,6 @@ public class SelectModeFragment extends Fragment {
     Spinner spinner;
     Button continueButton;
     String selectedMode;
-    EditText textFileName;
-    EditText numOfSteps;
     private String deviceAddress;
 
 
@@ -64,8 +66,7 @@ public class SelectModeFragment extends Fragment {
             }
         });
 
-        textFileName = (EditText) view.findViewById(R.id.textFileName);
-        numOfSteps = (EditText) view.findViewById(R.id.numOfSteps);
+
         continueButton = (Button) view.findViewById(R.id.continueButton);
 
 
@@ -76,19 +77,6 @@ public class SelectModeFragment extends Fragment {
                 args.putString("device", deviceAddress);
 
 
-                String currFileName = textFileName.getText().toString();
-                String currSteps = numOfSteps.getText().toString();
-                if (currFileName.matches("")) {
-                    Toast.makeText(getContext(), "Please enter  file name", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (currSteps.matches("")) {
-                    Toast.makeText(getContext(), "Please enter number of steps", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                args.putString("fileName", currFileName);
-                args.putString("numOfSteps", currSteps);
                 Fragment fragment = new TerminalFragment();
                 fragment.setArguments(args);
                 getFragmentManager().beginTransaction().replace(R.id.fragment, fragment, "terminal").addToBackStack(null).commit();
@@ -100,5 +88,26 @@ public class SelectModeFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_devices, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.bt_settings) {
+            Intent intent = new Intent();
+            intent.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
+            startActivity(intent);
+            return true;
+        } else if (id == R.id.load1) {
+            Fragment fragment = new CsvFragment();
+            getFragmentManager().beginTransaction().replace(R.id.fragment, fragment, "terminal").addToBackStack(null).commit();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
 
 }

@@ -21,20 +21,21 @@ public class TrainingActivity extends AppCompatActivity implements FragmentManag
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportFragmentManager().addOnBackStackChangedListener(this);
-        if(ContextCompat.checkSelfPermission(TrainingActivity.this,Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ){
-            ActivityCompat.requestPermissions(TrainingActivity.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},0);
+
+        if (ContextCompat.checkSelfPermission(TrainingActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(TrainingActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
         }
 
-            if (savedInstanceState == null)
+        if (savedInstanceState == null)
             getSupportFragmentManager().beginTransaction().add(R.id.fragment, new DevicesFragment(), "devices").commit();
         else
             onBackStackChanged();
 
-        }
+    }
 
     @Override
     public void onBackStackChanged() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(getSupportFragmentManager().getBackStackEntryCount()>0);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(getSupportFragmentManager().getBackStackEntryCount() > 0);
     }
 
     @Override
@@ -42,4 +43,5 @@ public class TrainingActivity extends AppCompatActivity implements FragmentManag
         onBackPressed();
         return true;
     }
+
 }
