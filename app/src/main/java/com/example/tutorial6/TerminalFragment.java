@@ -58,6 +58,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -86,9 +87,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private double sumRedRms, sumIrRms = 0;
     private double ESpO2 = 100.0;
 
-    private int sumples = 200;
     private int sumplesMag = 100;
     private int samplingsSPO2 = 0;
+    private int samplingsBPM = 0;
+    private ArrayList<Integer> bpmSamples = new ArrayList<Integer>(Arrays.asList(70, 70, 70, 70, 70));
+    private int avgBpm = 70;
 
 
     private enum Connected {False, Pending, True;}
@@ -602,10 +605,25 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void calcHealthParams(String ir, String red, float time_msec) {
 //                Calculate SPO2
         int irVal = Integer.parseInt(ir);
         int redVal = Integer.parseInt(red);
+        File file = new File("/storage/self/primary/IOT/");
+        file.mkdirs();
+        String csv = "/storage/self/primary/IOT/oximeterData.csv";
+
+        CSVWriter csvWriter = null;
+        try {
+            csvWriter = new CSVWriter(new FileWriter(csv, true));
+            String[] row = new String[]{String.valueOf(time_msec), String.valueOf(irVal), String.valueOf(redVal)};
+            csvWriter.writeNext(row);
+            csvWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         double frate = 0.95; //low pass filter for IR/red LED value to eliminate AC component
         avgIr = lowPassFilter(irVal, avgIr, sumIrRms, frate)[0];
         sumIrRms = lowPassFilter(irVal, avgIr, sumIrRms, frate)[1];
@@ -613,7 +631,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         sumRedRms = lowPassFilter(redVal, avgRed, sumRedRms, frate)[1];
 
         samplingsSPO2 += 1;
-        if (samplingsSPO2 % 200 == 0) {
+        if (samplingsSPO2 % 50 == 0) {
             SPO2();
             sumIrRms = 0;
             sumRedRms = 0;
@@ -632,21 +650,36 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         PyObject pyobj = py.getModule("test");
 
 
-        //TODO: find way to get accurate measurements of bpm!
         if (irVal > 50000) {
             timeData.add((float) (time_msec / 1000.0)); //milli sec to sec
             irData.add((float) irVal);
             redData.add((float) redVal);
+            samplingsBPM += 1;
         }
-        if (timeData.size() % sumples == 0) {
+        if (samplingsBPM % 30 == 0) {
             PyObject obj = pyobj.callAttr("calcBPM", timeData.toArray(), irData.toArray(), redData.toArray());
-            Log.println(Log.ASSERT, "bpm", obj.toString());
+            int avgSize = 5;
+            int currentBpm = obj.toInt();
+            avgBpm = bpmSamples.stream().mapToInt(Integer::intValue).sum() / avgSize;
+            if (currentBpm > 1.5 * avgBpm || currentBpm < avgBpm / 1.5) {
+                bpmSamples.add((int) Math.round(0.9 * avgBpm + 0.1 * currentBpm));
+            } else {
+                bpmSamples.add(currentBpm);
+            }
+            bpmSamples.remove(0);
 
-            if (40.0 < obj.toInt() && obj.toInt() < 250.0) {
-                displayBPM.setText(obj.toString());
+            timeData = new ArrayList<Float>();
+            irData = new ArrayList<Float>();
+            redData = new ArrayList<Float>();
+            samplingsBPM = 0;
+
+            Log.println(Log.ASSERT, "bpm", obj.toString());
+            Log.println(Log.ASSERT, "avg bpm", String.valueOf(avgBpm));
+
+            if (40.0 < avgBpm && avgBpm < 250.0) {
+                displayBPM.setText(String.valueOf(avgBpm));
 
             }
-            sumples += 100;
         }
 
     }
@@ -657,7 +690,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         ESpO2 = 0.7 * ESpO2 + (1.0 - 0.7) * SpO2;
         Log.println(Log.ASSERT, "spo", String.valueOf(ESpO2));
         if (90.0 < ESpO2 && ESpO2 < 100.0) {
-            displaySPO2.setText(String.valueOf((int) ESpO2));
+            displaySPO2.setText(String.valueOf((int) Math.round(ESpO2)));
 
         }
     }
