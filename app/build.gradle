@@ -26,6 +26,9 @@ android {
                 // A requirement specifier, with or without a version number:
                 install "numpy"
                 install "matplotlib"
+                install "glob2"
+                install "python-math"
+                install "scipy"
             }
         }
         sourceSets {

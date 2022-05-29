@@ -75,13 +75,8 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
 
     private Map<String, List<Float>> mRawAccelValues = new HashMap<String, List<Float>>();
-    private ArrayList<Double> magVals = new ArrayList<Double>();
-    private ArrayList<Double> magValsPos = new ArrayList<Double>();
-    private ArrayList<Double> magValsNeg = new ArrayList<Double>();
+    private ArrayList<Double> meanMagVals = new ArrayList<Double>();
 
-
-    private double thresholdWalking = 3.0;
-    private double thresholdRunning = 10.0;
 
     private double avgX, avgY, avgZ, avgIr, avgRed = 0;
     private double sumRedRms, sumIrRms = 0;
@@ -92,6 +87,8 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private int samplingsBPM = 0;
     private ArrayList<Integer> bpmSamples = new ArrayList<Integer>(Arrays.asList(70, 70, 70, 70, 70));
     private int avgBpm = 70;
+    private PyObject pyobjTest;
+    private PyObject pyobjcalcStepsAlgo;
 
 
     private enum Connected {False, Pending, True;}
@@ -136,9 +133,14 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         setHasOptionsMenu(true);
         setRetainInstance(true);
 
+        if (!Python.isStarted()) {
+            Python.start(new AndroidPlatform(getContext()));
+        }
         deviceAddress = getArguments().getString("device");
         selectedMode = getArguments().getString("mode");
-
+        Python py = Python.getInstance();
+        pyobjTest = py.getModule("test");
+        pyobjcalcStepsAlgo = py.getModule("calcStepsAlgo");
 
     }
 
@@ -469,6 +471,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         receivedData = new ArrayList<>();
         stepCount = 0;
         displayNumOfSteps.setText(stepCount.toString());
+        mRawAccelValues = new HashMap<String, List<Float>>();
         displayBPM.setText("");
         displaySPO2.setText("");
 
@@ -543,6 +546,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 addVal("z", Float.parseFloat(parts[2]));
                 addVal("mag", (float) mag);
 
+
                 double magNoG = calcSteps(mag);
                 data.addEntry(new Entry(time_msec / 1000, (float) magNoG), 0);
                 lineDataSetAxisAcc.notifyDataSetChanged(); // let the data know a dataSet changed
@@ -576,61 +580,59 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     @RequiresApi(api = Build.VERSION_CODES.N)
     private double calcSteps(double mag) {
         //              Calculate Steps
+        if (mRawAccelValues.get("x").size() > 0 && mRawAccelValues.get("x").size() % 50 == 0) {
+            PyObject obj = pyobjcalcStepsAlgo.callAttr("steps_count", mRawAccelValues.get("x").toArray(), mRawAccelValues.get("y").toArray(), mRawAccelValues.get("z").toArray());
+            if (obj != null) {
+                stepCount = obj.toInt();
+
+            }
+        }
+
+
         double meanMag = mRawAccelValues.get("mag").stream()
                 .mapToDouble(d -> d)
                 .average()
                 .orElse(0.0);
+        meanMagVals.add(meanMag);
         double magNoG = mag - meanMag;
 
-        if (magNoG >= 0) {
-            magValsPos.add(magNoG);
-        } else {
-            magValsNeg.add(magNoG);
-        }
-
-
-        double thresholdPos = selectedMode.equals("Walking") ? thresholdWalking : thresholdRunning;
-        if (magValsPos.size() > sumplesMag) {
-            thresholdPos = new StepsDetection(getContext(), thresholdPos).findPeak(magValsPos);
-            Log.println(Log.ASSERT, "threshold", String.valueOf(thresholdPos));
-            sumplesMag += 100;
-        }
-        if (magNoG >= thresholdPos) {
-            stepCount += 1;
-        }
-
-
         displayNumOfSteps.setText(stepCount.toString());
-        return magNoG;
+        return magNoG > 2.0 ? magNoG : 0;
 
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void calcHealthParams(String ir, String red, float time_msec) {
-//                Calculate SPO2
         int irVal = Integer.parseInt(ir);
         int redVal = Integer.parseInt(red);
-        File file = new File("/storage/self/primary/IOT/");
-        file.mkdirs();
-        String csv = "/storage/self/primary/IOT/oximeterData.csv";
+//        File file = new File("/storage/self/primary/IOT/");
+//        file.mkdirs();
+//        String csv = "/storage/self/primary/IOT/oximeterData.csv";
+//
+//        CSVWriter csvWriter = null;
+//        try {
+//            csvWriter = new CSVWriter(new FileWriter(csv, true));
+//            String[] row = new String[]{String.valueOf(time_msec), String.valueOf(irVal), String.valueOf(redVal)};
+//            csvWriter.writeNext(row);
+//            csvWriter.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        if (irVal > 5000) {
+            double frate = 0.95; //low pass filter for IR/red LED value to eliminate AC component
+            avgIr = lowPassFilter(irVal, avgIr, sumIrRms, frate)[0];
+            sumIrRms = lowPassFilter(irVal, avgIr, sumIrRms, frate)[1];
+            avgRed = lowPassFilter(redVal, avgRed, sumRedRms, frate)[0];
+            sumRedRms = lowPassFilter(redVal, avgRed, sumRedRms, frate)[1];
+            samplingsSPO2 += 1;
+            timeData.add((float) (time_msec / 1000.0)); //milli sec to sec
+            irData.add((float) irVal);
+            redData.add((float) redVal);
+            samplingsBPM += 1;
 
-        CSVWriter csvWriter = null;
-        try {
-            csvWriter = new CSVWriter(new FileWriter(csv, true));
-            String[] row = new String[]{String.valueOf(time_msec), String.valueOf(irVal), String.valueOf(redVal)};
-            csvWriter.writeNext(row);
-            csvWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
-        double frate = 0.95; //low pass filter for IR/red LED value to eliminate AC component
-        avgIr = lowPassFilter(irVal, avgIr, sumIrRms, frate)[0];
-        sumIrRms = lowPassFilter(irVal, avgIr, sumIrRms, frate)[1];
-        avgRed = lowPassFilter(redVal, avgRed, sumRedRms, frate)[0];
-        sumRedRms = lowPassFilter(redVal, avgRed, sumRedRms, frate)[1];
-
-        samplingsSPO2 += 1;
+        //                Calculate SPO2
         if (samplingsSPO2 % 50 == 0) {
             SPO2();
             sumIrRms = 0;
@@ -642,22 +644,10 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
         }
 
+
 //                Calculate BPM
-        if (!Python.isStarted()) {
-            Python.start(new AndroidPlatform(getContext()));
-        }
-        Python py = Python.getInstance();
-        PyObject pyobj = py.getModule("test");
-
-
-        if (irVal > 50000) {
-            timeData.add((float) (time_msec / 1000.0)); //milli sec to sec
-            irData.add((float) irVal);
-            redData.add((float) redVal);
-            samplingsBPM += 1;
-        }
-        if (samplingsBPM % 30 == 0) {
-            PyObject obj = pyobj.callAttr("calcBPM", timeData.toArray(), irData.toArray(), redData.toArray());
+        if (bpmSamples.size() != 0 && samplingsBPM % 30 == 0) {
+            PyObject obj = pyobjTest.callAttr("calcBPM", timeData.toArray(), irData.toArray(), redData.toArray());
             int avgSize = 5;
             int currentBpm = obj.toInt();
             avgBpm = bpmSamples.stream().mapToInt(Integer::intValue).sum() / avgSize;
@@ -673,8 +663,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             redData = new ArrayList<Float>();
             samplingsBPM = 0;
 
-            Log.println(Log.ASSERT, "bpm", obj.toString());
-            Log.println(Log.ASSERT, "avg bpm", String.valueOf(avgBpm));
 
             if (40.0 < avgBpm && avgBpm < 250.0) {
                 displayBPM.setText(String.valueOf(avgBpm));
@@ -688,7 +676,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         double R = (Math.sqrt(sumRedRms) / avgRed) / (Math.sqrt(sumIrRms) / avgIr);
         double SpO2 = -23.3 * (R - 0.4) + 100;
         ESpO2 = 0.7 * ESpO2 + (1.0 - 0.7) * SpO2;
-        Log.println(Log.ASSERT, "spo", String.valueOf(ESpO2));
+//        Log.println(Log.ASSERT, "spo", String.valueOf(ESpO2));
         if (90.0 < ESpO2 && ESpO2 < 100.0) {
             displaySPO2.setText(String.valueOf((int) Math.round(ESpO2)));
 
