@@ -15,13 +15,11 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.text.Editable;
 import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,7 +41,6 @@ import androidx.fragment.app.FragmentManager;
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
-import com.example.tutorial6.StepsDetections.StepsDetection;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -71,18 +68,18 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private TextView displayNumOfSteps;
     private TextView displayBPM;
     private TextView displaySPO2;
-    private Integer stepCount = 0;
+    private TextView receiveText;
+    private Integer stepsCounted = 0;
 
 
     private Map<String, List<Float>> mRawAccelValues = new HashMap<String, List<Float>>();
     private ArrayList<Double> meanMagVals = new ArrayList<Double>();
 
 
-    private double avgX, avgY, avgZ, avgIr, avgRed = 0;
+    private double avgIr, avgRed = 0;
     private double sumRedRms, sumIrRms = 0;
     private double ESpO2 = 100.0;
 
-    private int sumplesMag = 100;
     private int samplingsSPO2 = 0;
     private int samplingsBPM = 0;
     private ArrayList<Integer> bpmSamples = new ArrayList<Integer>(Arrays.asList(70, 70, 70, 70, 70));
@@ -91,15 +88,14 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private PyObject pyobjcalcStepsAlgo;
 
 
-    private enum Connected {False, Pending, True;}
 
+    private enum Connected {False, Pending, True;}
     private SerialService service;
     private String deviceAddress;
     private String selectedMode;
     private String fileName;
     private String numOfSteps;
     private Boolean isReceiving = false;
-    private TextView receiveText;
 
     private List<String[]> receivedData = new ArrayList<>();
 
@@ -224,6 +220,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         receiveText = view.findViewById(R.id.receive_text);                          // TextView performance decreases with number of spans
         receiveText.setTextColor(getResources().getColor(R.color.colorRecieveText)); // set as default color to reduce number of spans
         receiveText.setMovementMethod(ScrollingMovementMethod.getInstance());
+
         mpLineChart = (LineChart) view.findViewById(R.id.line_chart);
         mpLineChart.getDescription().setText("Time [sec]");
 
@@ -238,7 +235,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
         lineDataSetAxisAcc = new
 
-                LineDataSet(emptyDataValues(), "Acc. Norm");
+                LineDataSet(emptyDataValues(), "");
         lineDataSetAxisAcc.setColors(R.color.colorPrimaryDark);
 //        lineDataSetAxisAcc.setCircleColor(R.color.colorAccent);
 //        lineDataSetAxisAcc.setCircleHoleColor(R.color.colorAccent);
@@ -260,10 +257,9 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 //        dataSets.add(lineDataSetAxisZ);
         dataSets.add(lineDataSetAxisAcc);
 
-        data = new
-
-                LineData(dataSets);
+        data = new LineData(dataSets);
         mpLineChart.setData(data);
+        mpLineChart.getAxisLeft().setAxisMinimum(0);
         mpLineChart.invalidate();
 
         Button buttonReset = (Button) view.findViewById(R.id.resetButton);
@@ -447,7 +443,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             csvWriter.writeNext(row);
             row = new String[]{"COUNT OF ACTUAL STEPS", numOfSteps};
             csvWriter.writeNext(row);
-            row = new String[]{"ESTIMATED NUMBER OF STEPS", stepCount.toString()};
+            row = new String[]{"ESTIMATED NUMBER OF STEPS", stepsCounted.toString()};
             csvWriter.writeNext(row);
             row = new String[]{"   "};
             csvWriter.writeNext(row);
@@ -469,11 +465,12 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         //Reset Saved Data
         isReceiving = false;
         receivedData = new ArrayList<>();
-        stepCount = 0;
-        displayNumOfSteps.setText(stepCount.toString());
+        stepsCounted = 0;
+        displayNumOfSteps.setText(stepsCounted.toString());
         mRawAccelValues = new HashMap<String, List<Float>>();
         displayBPM.setText("");
         displaySPO2.setText("");
+        receiveText.setText("");
 
 
         //Clear displayed graph
@@ -498,7 +495,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 //        }
         mpLineChart.notifyDataSetChanged();
         mpLineChart.invalidate();
-        receiveText.setText("");
 
     }
 
@@ -511,9 +507,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     // Updates done while message received from the device
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void receive(byte[] message) {
-//        if (hexEnabled) {
-//            receiveText.append(TextUtil.toHexString(message) + '\n');
-//        } else {
         String msg = new String(message);
         if (newline.equals(TextUtil.newline_crlf) && msg.length() > 0) {
             // don't show CR as ^M if directly before LF
@@ -530,11 +523,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 float zVal = Float.parseFloat(parts[2]);
                 float time_msec = Float.parseFloat(parts[3]);
 
-                double rate = 0.333;
-                avgX = avgX * rate + (double) xVal * (1.0 - rate);//average val level by low pass filter
-                avgY = avgY * rate + (double) yVal * (1.0 - rate);//average val level by low pass filter
-                avgZ = avgZ * rate + (double) zVal * (1.0 - rate);//average val level by low pass filter
-
 
                 String row[] = new String[]{String.valueOf(time_msec / 1000.0), parts[0], parts[1], parts[2]};
                 receivedData.add(row);
@@ -545,7 +533,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 addVal("y", Float.parseFloat(parts[1]));
                 addVal("z", Float.parseFloat(parts[2]));
                 addVal("mag", (float) mag);
-
 
                 double magNoG = calcSteps(mag);
                 data.addEntry(new Entry(time_msec / 1000, (float) magNoG), 0);
@@ -559,14 +546,14 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             msg = msg.replace(TextUtil.newline_crlf, TextUtil.newline_lf);
             // sand here msg to function that saves it to csv
             // special handling if CR and LF come in separate fragments
-            if (pendingNewline && msg.charAt(0) == '\n') {
-                Editable edt = receiveText.getEditableText();
-                if (edt != null && edt.length() > 1)
-                    edt.replace(edt.length() - 2, edt.length(), "");
-            }
+//            if (pendingNewline && msg.charAt(0) == '\n') {
+//                Editable edt = receiveText.getEditableText();
+//                if (edt != null && edt.length() > 1)
+//                    edt.replace(edt.length() - 2, edt.length(), "");
+//            }
             pendingNewline = msg.charAt(msg.length() - 1) == '\r';
         }
-        receiveText.append(TextUtil.toCaretString(msg, newline.length() != 0));
+//        receiveText.append(TextUtil.toCaretString(msg, newline.length() != 0));
     }
 
     private double[] lowPassFilter(int val, double avgVal, double sumRms, double frate) {
@@ -582,13 +569,10 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         //              Calculate Steps
         if (mRawAccelValues.get("x").size() > 0 && mRawAccelValues.get("x").size() % 50 == 0) {
             PyObject obj = pyobjcalcStepsAlgo.callAttr("steps_count", mRawAccelValues.get("x").toArray(), mRawAccelValues.get("y").toArray(), mRawAccelValues.get("z").toArray());
-            if (obj != null) {
-                stepCount = obj.toInt();
-
+            if (obj != null && obj.toInt() > stepsCounted) {
+                stepsCounted = obj.toInt();
             }
         }
-
-
         double meanMag = mRawAccelValues.get("mag").stream()
                 .mapToDouble(d -> d)
                 .average()
@@ -596,7 +580,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         meanMagVals.add(meanMag);
         double magNoG = mag - meanMag;
 
-        displayNumOfSteps.setText(stepCount.toString());
+        displayNumOfSteps.setText(stepsCounted.toString());
         return magNoG > 2.0 ? magNoG : 0;
 
     }
@@ -605,21 +589,8 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private void calcHealthParams(String ir, String red, float time_msec) {
         int irVal = Integer.parseInt(ir);
         int redVal = Integer.parseInt(red);
-//        File file = new File("/storage/self/primary/IOT/");
-//        file.mkdirs();
-//        String csv = "/storage/self/primary/IOT/oximeterData.csv";
-//
-//        CSVWriter csvWriter = null;
-//        try {
-//            csvWriter = new CSVWriter(new FileWriter(csv, true));
-//            String[] row = new String[]{String.valueOf(time_msec), String.valueOf(irVal), String.valueOf(redVal)};
-//            csvWriter.writeNext(row);
-//            csvWriter.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
         if (irVal > 5000) {
-            double frate = 0.95; //low pass filter for IR/red LED value to eliminate AC component
+            double frate = 0.33; //low pass filter for IR/red LED value to eliminate AC component
             avgIr = lowPassFilter(irVal, avgIr, sumIrRms, frate)[0];
             sumIrRms = lowPassFilter(irVal, avgIr, sumIrRms, frate)[1];
             avgRed = lowPassFilter(redVal, avgRed, sumRedRms, frate)[0];
@@ -631,7 +602,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             samplingsBPM += 1;
 
         }
-
         //                Calculate SPO2
         if (samplingsSPO2 % 50 == 0) {
             SPO2();
