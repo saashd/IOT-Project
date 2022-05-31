@@ -1,10 +1,6 @@
 ## Android App for Health Tracking - final project in IOT course.
 
-
-https://user-images.githubusercontent.com/52024657/171200134-68c85889-cc04-46fc-8503-876775269fe4.mp4
-
-
-
+https://user-images.githubusercontent.com/52024657/171200518-ca02194d-9aec-4bcb-8f7d-104596fcc07a.mp4
 
 ##### The project includes receiving, processing and presenting data from the following sensors:
     1. IMU 9-DOF -used to count user's steps in real time.
