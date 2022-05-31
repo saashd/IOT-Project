@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:gravity="center"
-    tools:context="PersonalDetails.PersonalDetailsFragment">
+    tools:context="com.example.tutorial6.PersonalDetails.PersonalDetailsFragment">
 
     <LinearLayout
         android:layout_width="350dp"

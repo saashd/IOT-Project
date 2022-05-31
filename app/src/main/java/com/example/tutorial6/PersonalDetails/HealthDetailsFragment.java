@@ -1,4 +1,4 @@
-package PersonalDetails;
+package com.example.tutorial6.PersonalDetails;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;

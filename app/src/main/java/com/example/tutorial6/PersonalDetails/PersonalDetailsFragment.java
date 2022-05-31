@@ -1,4 +1,4 @@
-package PersonalDetails;
+package com.example.tutorial6.PersonalDetails;
 
 import android.os.Bundle;
 
@@ -22,8 +22,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.Objects;
 
 
 public class PersonalDetailsFragment extends Fragment {

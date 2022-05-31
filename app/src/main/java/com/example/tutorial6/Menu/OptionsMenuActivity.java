@@ -9,13 +9,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.tutorial6.CsvFragment;
-import com.example.tutorial6.LogIn.RegistrationActivity;
 import com.example.tutorial6.MainActivity;
 import com.example.tutorial6.R;
-import com.example.tutorial6.TrainingActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
-import PersonalDetails.PersonalDetailsFragment;
+import com.example.tutorial6.PersonalDetails.PersonalDetailsFragment;
 
 
 public class OptionsMenuActivity extends AppCompatActivity {
