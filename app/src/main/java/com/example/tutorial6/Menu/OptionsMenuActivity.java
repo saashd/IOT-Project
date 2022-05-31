@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import com.example.tutorial6.CsvFragment;
 import com.example.tutorial6.MainActivity;
 import com.example.tutorial6.R;
+import com.example.tutorial6.TrainingActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 import com.example.tutorial6.PersonalDetails.PersonalDetailsFragment;
@@ -35,6 +36,14 @@ public class OptionsMenuActivity extends AppCompatActivity {
         } else if (id == R.id.load1) {
             Fragment fragmentCSV = new CsvFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.activity_training, fragmentCSV, "terminal").addToBackStack(null).commit();
+            return true;
+        } else if (id == R.id.training) {
+            Intent intent
+                    = new Intent(OptionsMenuActivity.this,
+                    TrainingActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
             return true;
         } else if (id == R.id.personal_details) {
             Fragment fragmentDetails = new PersonalDetailsFragment();

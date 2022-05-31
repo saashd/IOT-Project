@@ -14,6 +14,9 @@
         android:id="@+id/personal_details"
         android:title="Personal Details" />
     <item
+        android:id="@+id/training"
+        android:title="Training" />
+    <item
         android:id="@+id/statistics"
         android:title="Statistics" />
     <item
