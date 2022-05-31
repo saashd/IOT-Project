@@ -21,9 +21,6 @@ import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -41,6 +38,9 @@ import androidx.fragment.app.FragmentManager;
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
+import com.example.tutorial6.Serial.SerialListener;
+import com.example.tutorial6.Serial.SerialService;
+import com.example.tutorial6.Serial.SerialSocket;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -88,8 +88,8 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private PyObject pyobjcalcStepsAlgo;
 
 
-
     private enum Connected {False, Pending, True;}
+
     private SerialService service;
     private String deviceAddress;
     private String selectedMode;
@@ -373,27 +373,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         return view;
     }
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_devices, menu);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.bt_settings) {
-            Intent intent = new Intent();
-            intent.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
-            startActivity(intent);
-            return true;
-        } else if (id == R.id.load1) {
-            Fragment fragment = new CsvFragment();
-            getFragmentManager().beginTransaction().replace(R.id.fragment, fragment, "terminal").addToBackStack(null).commit();
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
 
     /*
      * Serial + UI

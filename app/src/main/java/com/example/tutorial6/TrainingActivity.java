@@ -4,22 +4,29 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+
+import com.example.tutorial6.Menu.OptionsMenuActivity;
 
 
-public class TrainingActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
+
+public class TrainingActivity extends OptionsMenuActivity implements FragmentManager.OnBackStackChangedListener {
+
+    private Toolbar toolbar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
         getSupportFragmentManager().addOnBackStackChangedListener(this);
 
         if (ContextCompat.checkSelfPermission(TrainingActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -27,7 +34,7 @@ public class TrainingActivity extends AppCompatActivity implements FragmentManag
         }
 
         if (savedInstanceState == null)
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment, new DevicesFragment(), "devices").commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.activity_training, new DevicesFragment(), "devices").commit();
         else
             onBackStackChanged();
 
@@ -43,5 +50,6 @@ public class TrainingActivity extends AppCompatActivity implements FragmentManag
         onBackPressed();
         return true;
     }
+
 
 }

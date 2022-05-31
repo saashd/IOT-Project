@@ -2,23 +2,17 @@ package com.example.tutorial6;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.ListFragment;
-
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.ListFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,12 +59,6 @@ public class DevicesFragment extends ListFragment {
         setListAdapter(listAdapter);
     }
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_devices, menu);
-        if (bluetoothAdapter == null)
-            menu.findItem(R.id.bt_settings).setEnabled(false);
-    }
 
     @Override
     public void onResume() {
@@ -84,22 +72,6 @@ public class DevicesFragment extends ListFragment {
         refresh();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.bt_settings) {
-            Intent intent = new Intent();
-            intent.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
-            startActivity(intent);
-            return true;
-        } else if (id == R.id.load1) {
-            Fragment fragment = new CsvFragment();
-            getFragmentManager().beginTransaction().replace(R.id.fragment, fragment, "terminal").addToBackStack(null).commit();
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
 
     void refresh() {
         listItems.clear();
@@ -118,15 +90,9 @@ public class DevicesFragment extends ListFragment {
         Bundle args = new Bundle();
         args.putString("device", device.getAddress());
 
-        //Before mod.
-//        Fragment fragment = new TerminalFragment();
-//        fragment.setArguments(args);
-//        getFragmentManager().beginTransaction().replace(R.id.fragment, fragment, "terminal").addToBackStack(null).commit();
-
-        // After mod. Displays selection of mode( run/walk ) and start button (second fragment)
-        Fragment modeFragment = new SelectModeFragment();
+      Fragment modeFragment = new SelectModeFragment();
         modeFragment.setArguments(args);
-        getFragmentManager().beginTransaction().replace(R.id.fragment, modeFragment, "terminal").addToBackStack(null).commit();
+        getFragmentManager().beginTransaction().replace(R.id.activity_training, modeFragment, "terminal").addToBackStack(null).commit();
     }
 
     /**

@@ -1,5 +1,7 @@
 ## Android App for Health Tracking - final project in IOT course.
 
+https://user-images.githubusercontent.com/52024657/171200518-ca02194d-9aec-4bcb-8f7d-104596fcc07a.mp4
+
 ##### The project includes receiving, processing and presenting data from the following sensors:
     1. IMU 9-DOF -used to count user's steps in real time.
     2. MAX301002 -used to measure and display user's BPM and %SPO2 in real time.
@@ -11,6 +13,7 @@
                 ↳ arduino
                     ↳ arduinoESP32
                         ↳ arduinoESP32.ino
+
 
 
 ##### The app also tracks user's location in real time.

@@ -1,4 +1,6 @@
-package com.example.tutorial6;
+package com.example.tutorial6.Serial;
+
+import com.example.tutorial6.BuildConfig;
 
 class Constants {
 

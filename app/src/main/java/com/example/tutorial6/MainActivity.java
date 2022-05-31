@@ -1,43 +1,47 @@
 package com.example.tutorial6;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
-
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+
+import com.example.tutorial6.LogIn.LoginActivity;
+import com.example.tutorial6.LogIn.RegistrationActivity;
 
 public class MainActivity extends AppCompatActivity {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Handler h = new Handler();
-        h.postDelayed(new Runnable() {
-            public void run() {
-                try {
-                    Intent homeIntent = new Intent(MainActivity.this, TrainingActivity.class);
-                    startActivity(homeIntent);
-                    finish();
+        Button registerButton = (Button) findViewById(R.id.registerButton);
 
-                } catch (Exception ex) {
-                    // Here we are logging the exception to see why it happened.
-                    Log.e("my app", ex.toString());
-                }
+
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
 
             }
-        }, 3000);
+        });
+
+        Button loginButton = (Button) findViewById(R.id.loginButton);
 
 
-    }
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
+            }
+        });
+
     }
 }
