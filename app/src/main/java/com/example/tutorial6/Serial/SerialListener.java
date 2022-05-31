@@ -1,6 +1,6 @@
-package com.example.tutorial6;
+package com.example.tutorial6.Serial;
 // Interface - defines what has to be in service class
-interface SerialListener {
+public interface SerialListener {
     void onSerialConnect      ();
     void onSerialConnectError (Exception e);
     void onSerialRead         (byte[] data);
