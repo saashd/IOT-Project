@@ -1,9 +1,12 @@
-package com.example.tutorial6.LocationTracker;
+package com.example.project72471.LocationTracker;
 
 public class MyLocation {
     private double latitude;
     private double longitude;
     private long time;
+
+    public MyLocation() {
+    }
 
     public MyLocation(double latitude, double longitude, long time) {
         this.latitude = latitude;

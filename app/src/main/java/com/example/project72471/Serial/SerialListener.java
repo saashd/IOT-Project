@@ -1,4 +1,4 @@
-package com.example.tutorial6.Serial;
+package com.example.project72471.Serial;
 // Interface - defines what has to be in service class
 public interface SerialListener {
     void onSerialConnect      ();

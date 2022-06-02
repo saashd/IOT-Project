@@ -1,4 +1,4 @@
-package com.example.tutorial6.Menu;
+package com.example.project72471.Menu;
 
 import android.content.Intent;
 import android.view.Menu;
@@ -8,13 +8,13 @@ import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.example.tutorial6.CsvFragment;
-import com.example.tutorial6.MainActivity;
-import com.example.tutorial6.R;
-import com.example.tutorial6.TrainingActivity;
+import com.example.project72471.CsvFragment;
+import com.example.project72471.MainActivity;
+import com.project72471.R;
+import com.example.project72471.TrainingActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
-import com.example.tutorial6.PersonalDetails.PersonalDetailsFragment;
+import com.example.project72471.PersonalDetails.PersonalDetailsFragment;
 
 
 public class OptionsMenuActivity extends AppCompatActivity {

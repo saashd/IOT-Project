@@ -1,4 +1,4 @@
-package com.example.tutorial6.LogIn;
+package com.example.project72471.LogIn;
 
 import android.os.Bundle;
 import android.content.Intent;
@@ -7,14 +7,13 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.tutorial6.R;
-import com.example.tutorial6.TrainingActivity;
+import com.project72471.R;
+import com.example.project72471.TrainingActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.AuthResult;
 import com.google.android.gms.tasks.OnCompleteListener;

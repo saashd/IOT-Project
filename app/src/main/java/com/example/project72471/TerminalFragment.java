@@ -1,4 +1,4 @@
-package com.example.tutorial6;
+package com.example.project72471;
 // binds bluetooth service. Maintains the graph
 
 import android.annotation.SuppressLint;
@@ -34,13 +34,15 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
-import com.example.tutorial6.Serial.SerialListener;
-import com.example.tutorial6.Serial.SerialService;
-import com.example.tutorial6.Serial.SerialSocket;
+import com.example.project72471.LocationTracker.MapsFragment;
+import com.example.project72471.Serial.SerialListener;
+import com.example.project72471.Serial.SerialService;
+import com.example.project72471.Serial.SerialSocket;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -49,6 +51,8 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.opencsv.CSVWriter;
+import com.project72471.R;
+
 
 import java.io.File;
 import java.io.FileWriter;
@@ -277,9 +281,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                     //                Start recording if first time or if data was stopped or reset been made
 
 //TODO: Run code only if really needed, my billing account won't make it till presentation.
-//                    MapsFragment childFragment = new MapsFragment();
-//                    FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-//                    transaction.replace(R.id.child_fragment_container, childFragment).addToBackStack("map").commit();
+                    Bundle args = new Bundle();
+                    MapsFragment childFragment = new MapsFragment();
+                    childFragment.setArguments(args);
+                    FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+                    transaction.replace(R.id.child_fragment_container, childFragment).addToBackStack("map").commit();
 
                     if (!isReceiving) {
                         isReceiving = true;
@@ -372,7 +378,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
         return view;
     }
-
 
 
     /*
@@ -593,8 +598,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             ESpO2 = 100.0;
 
         }
-
-
 //                Calculate BPM
         if (bpmSamples.size() != 0 && samplingsBPM % 30 == 0) {
             PyObject obj = pyobjTest.callAttr("calcBPM", timeData.toArray(), irData.toArray(), redData.toArray());

@@ -1,4 +1,4 @@
-package com.example.tutorial6.Serial;
+package com.example.project72471.Serial;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
@@ -7,9 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-
-import com.example.tutorial6.Serial.Constants;
-import com.example.tutorial6.Serial.SerialListener;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;

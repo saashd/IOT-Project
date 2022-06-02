@@ -1,4 +1,4 @@
-package com.example.tutorial6;
+package com.example.project72471;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -13,6 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.ListFragment;
+
+import com.project72471.R;
 
 import java.util.ArrayList;
 import java.util.Collections;

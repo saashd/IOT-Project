@@ -1,4 +1,4 @@
-package com.example.tutorial6;
+package com.example.project72471;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,8 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.tutorial6.LogIn.LoginActivity;
-import com.example.tutorial6.LogIn.RegistrationActivity;
+import com.example.project72471.LogIn.LoginActivity;
+import com.example.project72471.LogIn.RegistrationActivity;
+import com.project72471.R;
 
 public class MainActivity extends AppCompatActivity {
 

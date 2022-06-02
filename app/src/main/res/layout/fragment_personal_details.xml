@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:gravity="center"
-    tools:context="com.example.tutorial6.PersonalDetails.PersonalDetailsFragment">
+
+    tools:context="com.example.project72471.PersonalDetails.PersonalDetailsFragment">
 
     <LinearLayout
         android:layout_width="350dp"
@@ -27,8 +28,9 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-
             android:autofillHints="name"
+
+            android:backgroundTint="@color/colorPrimary"
             android:gravity="center"
             android:spinnerMode="dialog" />
 
@@ -36,7 +38,6 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-
             android:ems="10"
             android:gravity="center"
             android:text="@string/enter_your_age" />
@@ -46,6 +47,7 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:backgroundTint="@color/colorPrimary"
 
             android:ems="10"
             android:gravity="center"
@@ -55,7 +57,6 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-
             android:ems="10"
             android:gravity="center"
             android:text="@string/enter_your_height" />
@@ -65,6 +66,7 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:backgroundTint="@color/colorPrimary"
             android:ems="10"
             android:gravity="center"
             android:inputType="number" />
@@ -83,6 +85,7 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:backgroundTint="@color/colorPrimary"
             android:ems="10"
             android:gravity="center"
             android:inputType="number" />

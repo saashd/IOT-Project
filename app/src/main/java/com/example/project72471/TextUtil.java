@@ -1,4 +1,4 @@
-package com.example.tutorial6;
+package com.example.project72471;
 
 import android.text.Editable;
 import android.text.InputType;

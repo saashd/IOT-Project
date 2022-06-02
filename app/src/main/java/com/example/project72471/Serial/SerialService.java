@@ -1,4 +1,4 @@
-package com.example.tutorial6.Serial;
+package com.example.project72471.Serial;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -16,8 +16,7 @@ import android.os.Looper;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import com.example.tutorial6.R;
-import com.example.tutorial6.Serial.SerialListener;
+import com.project72471.R;
 
 import java.io.IOException;
 import java.util.LinkedList;

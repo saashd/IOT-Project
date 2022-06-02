@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/ic_simple_shiny"
     android:backgroundTint="@color/colorPrimaryDark"
-    tools:context=".StartScreenActivity">
+    tools:context="com.example.project72471.StartScreenActivity">
 
     <TextView
         android:id="@+id/welcomeMessage"

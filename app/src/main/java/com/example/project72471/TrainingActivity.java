@@ -1,4 +1,4 @@
-package com.example.tutorial6;
+package com.example.project72471;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -9,8 +9,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.tutorial6.Menu.OptionsMenuActivity;
-
+import com.example.project72471.Menu.OptionsMenuActivity;
+import com.project72471.R;
 
 
 public class TrainingActivity extends OptionsMenuActivity implements FragmentManager.OnBackStackChangedListener {

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:gravity="center_vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/custom_border"
+    android:gravity="center"
     android:orientation="vertical"
     android:padding="15dp"
-    android:layout_gravity="center"
-    tools:context=".LogIn.LoginActivity">
+    tools:context="com.example.project72471.LogIn.LoginActivity">
 
     <!-- TextView for heading -->
     <TextView
@@ -21,6 +22,7 @@
         android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimary"
         android:hint="Enter your Email" />
 
     <!-- Edit text for password -->
@@ -28,6 +30,7 @@
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimary"
         android:hint="Enter your Password"
         android:inputType="textPassword" />
 
@@ -37,15 +40,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
-        android:textColor="@android:color/white"
-        android:text="Login" />
+        android:text="Login"
+        android:textColor="@android:color/white" />
 
     <!-- ProgressBar for Loading Time -->
     <ProgressBar
-        android:layout_gravity="center"
-
         android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+
+        android:layout_width="83dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center"
         android:visibility="gone" />
 </LinearLayout>

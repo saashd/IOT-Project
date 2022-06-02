@@ -1,4 +1,4 @@
-package com.example.tutorial6.LocationTracker;
+package com.example.project72471.LocationTracker;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -25,8 +25,8 @@ import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
-import com.example.tutorial6.R;
-import com.example.tutorial6.Serial.SerialService;
+import com.project72471.R;
+import com.example.project72471.Serial.SerialService;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -39,7 +39,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -69,14 +68,16 @@ public class MapsFragment extends Fragment implements LocationListener, TaskLoad
     private static final int REQUEST_CODE = 101;
 
 
-    private final int MIN_TIME = 60000; // 1 sec
-    private final float MIN_DISTANCE = (float) 15;
+    private final int MIN_TIME = 60 * 1000; // 2 min
+    private final float MIN_DISTANCE = (float) 60; // meters;
 
     private Polyline currentPolyline;
     ArrayList<LatLng> markerPoints = new ArrayList<>();
     private List<Polyline> polylines = null;
 
     private SupportMapFragment mapFragment;
+
+
 
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
@@ -111,12 +112,17 @@ public class MapsFragment extends Fragment implements LocationListener, TaskLoad
 
         myView = view;
 
+
+        fileName=DateFormat.getDateTimeInstance().format(new Date());
+
+
         manager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         reference = FirebaseDatabase.getInstance().getReference().child("LocationTracker").child(userUid).child(fileName);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+
 
         // Async map
         mapFragment.getMapAsync(new OnMapReadyCallback() {
@@ -132,10 +138,7 @@ public class MapsFragment extends Fragment implements LocationListener, TaskLoad
         });
 
         getLocationUpdates();
-
         readChanges();
-
-
         return view;
 
 

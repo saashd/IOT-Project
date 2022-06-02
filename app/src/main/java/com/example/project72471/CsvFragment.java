@@ -1,4 +1,4 @@
-package com.example.tutorial6;
+package com.example.project72471;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -23,6 +23,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.opencsv.CSVReader;
+import com.project72471.R;
 
 import java.io.File;
 import java.io.FileReader;
