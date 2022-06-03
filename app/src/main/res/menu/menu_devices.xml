@@ -26,4 +26,13 @@
         android:id="@+id/logout"
         android:title="Log out" />
 
+    <item
+        android:id="@+id/goal"
+        android:title="Daily Water Goal"
+        android:visible="true" />
+
+    <item
+        android:id="@+id/settings"
+        android:title="Water Reminder Settings" />
+
 </menu>

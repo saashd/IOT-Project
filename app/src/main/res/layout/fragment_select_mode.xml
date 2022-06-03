@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context="com.example.project72471.SelectModeFragment">
 
     <LinearLayout
@@ -25,11 +26,11 @@
             android:text="@string/choose_mode" />
 
         <Spinner
-            android:backgroundTint="@color/colorPrimary"
             android:id="@+id/spinner"
             android:layout_width="215dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:backgroundTint="@color/colorPrimary" />
 
         <Button
             android:id="@+id/continueButton"

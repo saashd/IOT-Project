@@ -5,101 +5,108 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
+    android:background="@color/white"
     android:gravity="center"
 
     tools:context="com.example.project72471.PersonalDetails.PersonalDetailsFragment">
 
     <LinearLayout
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/custom_border"
-        android:orientation="vertical">
+        android:background="@color/white"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="200dp"
+        <LinearLayout
+            android:layout_width="350dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ems="10"
-            android:gravity="center"
-            android:text="@string/gender" />
+            android:background="@drawable/custom_border"
+            android:orientation="vertical">
 
-        <Spinner
-            android:id="@+id/genderSpinner"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:autofillHints="name"
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:gravity="center"
+                android:text="@string/gender" />
 
-            android:backgroundTint="@color/colorPrimary"
-            android:gravity="center"
-            android:spinnerMode="dialog" />
+            <Spinner
+                android:id="@+id/genderSpinner"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:autofillHints="name"
 
-        <TextView
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ems="10"
-            android:gravity="center"
-            android:text="@string/enter_your_age" />
+                android:backgroundTint="@color/colorPrimary"
+                android:gravity="center"
+                android:spinnerMode="dialog" />
 
-        <EditText
-            android:id="@+id/age"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:backgroundTint="@color/colorPrimary"
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:gravity="center"
+                android:text="@string/enter_your_age" />
 
-            android:ems="10"
-            android:gravity="center"
-            android:inputType="number" />
+            <EditText
+                android:id="@+id/age"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/colorPrimary"
 
-        <TextView
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ems="10"
-            android:gravity="center"
-            android:text="@string/enter_your_height" />
+                android:ems="10"
+                android:gravity="center"
+                android:inputType="number" />
 
-        <EditText
-            android:id="@+id/height"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:backgroundTint="@color/colorPrimary"
-            android:ems="10"
-            android:gravity="center"
-            android:inputType="number" />
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:gravity="center"
+                android:text="@string/enter_your_height" />
 
-        <TextView
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            <EditText
+                android:id="@+id/height"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/colorPrimary"
+                android:ems="10"
+                android:gravity="center"
+                android:inputType="number" />
 
-            android:ems="10"
-            android:gravity="center"
-            android:text="@string/enter_your_weight" />
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
 
-        <EditText
-            android:id="@+id/weight"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:backgroundTint="@color/colorPrimary"
-            android:ems="10"
-            android:gravity="center"
-            android:inputType="number" />
+                android:ems="10"
+                android:gravity="center"
+                android:text="@string/enter_your_weight" />
 
-        <Button
-            android:id="@+id/applyButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="30dp"
-            android:background="@color/colorPrimary"
-            android:text="@string/applyButton"
-            android:textColor="@android:color/white" />
+            <EditText
+                android:id="@+id/weight"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/colorPrimary"
+                android:ems="10"
+                android:gravity="center"
+                android:inputType="number" />
 
+            <Button
+                android:id="@+id/applyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:background="@color/colorPrimary"
+                android:text="@string/applyButton"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
     </LinearLayout>
-
 </LinearLayout>

@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,33 +44,7 @@ public class PersonalDetailsFragment extends Fragment {
         String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userUid);
 
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Object data = dataSnapshot.child("ageVal").getValue();
-                if (data != null) {
-                    ageVal = ((Long) data).intValue();
-                    age.setText(String.valueOf(ageVal));
-                }
-                data = dataSnapshot.child("heightVal").getValue();
-                if (data != null) {
 
-                    heightVal = ((Long) data).intValue();
-                    height.setText(String.valueOf(heightVal));
-                }
-                data = dataSnapshot.child("weightVal").getValue();
-                if (data != null) {
-                    weightVal = ((Long) data).intValue();
-                    weight.setText(String.valueOf(weightVal));
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
 
     @Override
@@ -100,6 +73,41 @@ public class PersonalDetailsFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Object data = dataSnapshot.child("gender").getValue();
+                if (data != null) {
+                    gender = (String) data;
+                    int spinnerPosition = adapter.getPosition(gender);
+                    genderSpinner.setSelection(spinnerPosition);
+                }
+                data = dataSnapshot.child("ageVal").getValue();
+                if (data != null) {
+                    ageVal = ((Long) data).intValue();
+                    age.setText(String.valueOf(ageVal));
+                }
+                data = dataSnapshot.child("heightVal").getValue();
+                if (data != null) {
+
+                    heightVal = ((Long) data).intValue();
+                    height.setText(String.valueOf(heightVal));
+                }
+                data = dataSnapshot.child("weightVal").getValue();
+                if (data != null) {
+                    weightVal = ((Long) data).intValue();
+                    weight.setText(String.valueOf(weightVal));
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });

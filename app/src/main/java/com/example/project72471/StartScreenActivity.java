@@ -13,7 +13,7 @@ import com.project72471.R;
 
 
 public class StartScreenActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +26,11 @@ public class StartScreenActivity extends AppCompatActivity {
                 try {
                     Intent intent;
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
                     if (user != null) {
                         intent = new Intent(StartScreenActivity.this, TrainingActivity.class);
                     } else {
+
                         intent = new Intent(StartScreenActivity.this, MainActivity.class);
                     }
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
