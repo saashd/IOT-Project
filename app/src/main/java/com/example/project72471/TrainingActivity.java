@@ -112,7 +112,7 @@ public class TrainingActivity extends OptionsMenuActivity implements FragmentMan
                             long when = System.currentTimeMillis();         // notification time
                             Intent reminder = new Intent(TrainingActivity.this, ReminderService.class);
                             PendingIntent pendingIntent = PendingIntent.getService(TrainingActivity.this, 0, reminder, 0);
-                            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis()+(2 * 1000), (interval * 60 * 1000), pendingIntent);
+                            alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), (interval * 60 * 1000), pendingIntent);
 
                         }
                     } catch (ParseException e) {

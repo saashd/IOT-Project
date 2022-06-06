@@ -50,6 +50,9 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.opencsv.CSVWriter;
 import com.project72471.R;
 
@@ -57,7 +60,10 @@ import com.project72471.R;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -91,6 +97,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private PyObject pyobjTest;
     private PyObject pyobjcalcStepsAlgo;
 
+    private DatabaseReference reference;
+    private String todayDate;
+    private Instant startRec;
+    private Instant endRec;
+
 
     private enum Connected {False, Pending, True;}
 
@@ -111,9 +122,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
 
     LineChart mpLineChart;
-    LineDataSet lineDataSetAxisX;
-    LineDataSet lineDataSetAxisY;
-    LineDataSet lineDataSetAxisZ;
     LineDataSet lineDataSetAxisAcc;
 
     ArrayList<ILineDataSet> dataSets = new ArrayList<>();
@@ -141,6 +149,10 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         Python py = Python.getInstance();
         pyobjTest = py.getModule("test");
         pyobjcalcStepsAlgo = py.getModule("calcStepsAlgo");
+
+        String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        todayDate = DateFormat.getDateTimeInstance().format(new Date());
+        reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userUid).child(todayDate);
 
     }
 
@@ -228,21 +240,10 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         mpLineChart = (LineChart) view.findViewById(R.id.line_chart);
         mpLineChart.getDescription().setText("Time [sec]");
 
-//        lineDataSetAxisX = new LineDataSet(emptyDataValues(), "X-axis");
-//        lineDataSetAxisX.setColors(Color.RED);
-//
-//        lineDataSetAxisY = new LineDataSet(emptyDataValues(), "Y-axis");
-//        lineDataSetAxisY.setColors(Color.GREEN);
-//
-//        lineDataSetAxisZ = new LineDataSet(emptyDataValues(), "Z-axis");
-//        lineDataSetAxisZ.setColors(Color.BLUE);
 
-        lineDataSetAxisAcc = new
-
-                LineDataSet(emptyDataValues(), "");
+        lineDataSetAxisAcc = new LineDataSet(emptyDataValues(), "");
         lineDataSetAxisAcc.setColors(R.color.colorPrimaryDark);
-//        lineDataSetAxisAcc.setCircleColor(R.color.colorAccent);
-//        lineDataSetAxisAcc.setCircleHoleColor(R.color.colorAccent);
+
 
         //        Set dataset labels that appear in the bottom of the chart
         Legend l = mpLineChart.getLegend();
@@ -256,9 +257,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         xval.setGranularity(1f);
 
 
-//        dataSets.add(lineDataSetAxisX);
-//        dataSets.add(lineDataSetAxisY);
-//        dataSets.add(lineDataSetAxisZ);
         dataSets.add(lineDataSetAxisAcc);
 
         data = new LineData(dataSets);
@@ -272,6 +270,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         Button buttonStart = (Button) view.findViewById(R.id.startButton);
 
         buttonStart.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View view) {
@@ -293,6 +292,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                     displaySPO2.setText("Calculating....");
                     displayBPM.setText("Calculating....");
                     Toast.makeText(getContext(), "Recording Started", Toast.LENGTH_SHORT).show();
+                    startRec = Instant.now();
                 } else {
                     Toast.makeText(getContext(), "No device connected", Toast.LENGTH_SHORT).show();
 
@@ -313,8 +313,10 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
 
         buttonSaveData.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
+                endRec = Instant.now();
                 pauseReceiving();
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -334,6 +336,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 builder.setView(lay)
                         .setCancelable(false)
                         .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.O)
                             public void onClick(DialogInterface dialog, int id) {
                                 numOfSteps = inputSteps.getText().toString();
                                 fileName = inputFileName.getText().toString();
@@ -346,6 +349,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                                     return;
                                 }
                                 saveToCsv();
+                                saveToDB();
                                 reset();
                                 dialog.cancel();
                             }
@@ -410,6 +414,16 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         service.disconnect();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void saveToDB() {
+        reference.child(selectedMode).child("steps").setValue(stepsCounted);
+        reference.child(selectedMode).child("mode").setValue(selectedMode);
+        long timeElapsed = Duration.between(startRec, endRec).toMillis();
+        reference.child(selectedMode).child("duration").setValue(timeElapsed);
+
+
+    }
+
     private void saveToCsv() {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
@@ -461,23 +475,9 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         //Clear displayed graph
         LineData data = mpLineChart.getData();
         ILineDataSet set1 = data.getDataSetByIndex(0);
-//        ILineDataSet set2 = data.getDataSetByIndex(1);
-//        ILineDataSet set3 = data.getDataSetByIndex(2);
-//        ILineDataSet set4 = data.getDataSetByIndex(3);
         set1.removeLast();
-//        set2.removeLast();
-//        set3.removeLast();
-//        set4.removeLast();
         while (set1.removeLast()) {
         }
-//        while (set2.removeLast()) {
-//        }
-//        while (set3.removeLast()) {
-//
-//        }
-//        while (set4.removeLast()) {
-//
-//        }
         mpLineChart.notifyDataSetChanged();
         mpLineChart.invalidate();
 
@@ -529,16 +529,9 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             }
 
             msg = msg.replace(TextUtil.newline_crlf, TextUtil.newline_lf);
-            // sand here msg to function that saves it to csv
-            // special handling if CR and LF come in separate fragments
-//            if (pendingNewline && msg.charAt(0) == '\n') {
-//                Editable edt = receiveText.getEditableText();
-//                if (edt != null && edt.length() > 1)
-//                    edt.replace(edt.length() - 2, edt.length(), "");
-//            }
+
             pendingNewline = msg.charAt(msg.length() - 1) == '\r';
         }
-//        receiveText.append(TextUtil.toCaretString(msg, newline.length() != 0));
     }
 
     private double[] lowPassFilter(int val, double avgVal, double sumRms, double frate) {
@@ -629,7 +622,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         double R = (Math.sqrt(sumRedRms) / avgRed) / (Math.sqrt(sumIrRms) / avgIr);
         double SpO2 = -23.3 * (R - 0.4) + 100;
         ESpO2 = 0.7 * ESpO2 + (1.0 - 0.7) * SpO2;
-//        Log.println(Log.ASSERT, "spo", String.valueOf(ESpO2));
         if (90.0 < ESpO2 && ESpO2 < 100.0) {
             displaySPO2.setText(String.valueOf((int) Math.round(ESpO2)));
 

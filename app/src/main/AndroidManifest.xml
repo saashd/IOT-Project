@@ -23,7 +23,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat">
 
-        <service android:name="com.example.project72471.Hydration.ReminderService" />
+        <service android:name="com.example.project72471.Hydration.ReminderService"/>
 
         <activity
             android:name="com.example.project72471.MainActivity"

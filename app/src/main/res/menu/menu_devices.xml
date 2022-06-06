@@ -1,30 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        
+
         android:id="@+id/bt_settings"
         android:icon="@drawable/ic_baseline_bluetooth_24_white"
         android:title="Bluetooth settings"
-        app:showAsAction="always"
-        />
+        app:showAsAction="always" />
     <item
         android:id="@+id/personal_details"
         android:title="Personal Details" />
     <item
         android:id="@+id/training"
         android:title="Training" />
-    <item
-        android:id="@+id/statistics"
-        android:title="Statistics" />
-    <item
-        android:id="@+id/load1"
-        android:title="Load from CSV" />
-    <item
-        android:id="@+id/logout"
-        android:title="Log out" />
+
 
     <item
         android:id="@+id/goal"
@@ -34,5 +24,14 @@
     <item
         android:id="@+id/settings"
         android:title="Water Reminder Settings" />
+    <item
+        android:id="@+id/load1"
+        android:title="Load from CSV" />
+    <item
+        android:id="@+id/statistics"
+        android:title="Statistics" />
+    <item
+        android:id="@+id/logout"
+        android:title="Log out" />
 
 </menu>

@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context="com.example.project72471.Statistics.StatisticsFragment">
+
+
+    <include layout="@layout/toolbar_layout" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginTop="60dp"
+        android:orientation="vertical">
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/bar_chart"
+            android:layout_width="match_parent"
+            android:layout_height="250dp" />
+
+<!--        <com.github.mikephil.charting.charts.LineChart-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:id="@+id/line_chart_steps"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="250dp" />-->
+
+        <com.github.mikephil.charting.charts.HorizontalBarChart
+            android:layout_marginTop="20dp"
+            android:id="@+id/bar_chart_steps"
+            android:layout_width="match_parent"
+            android:layout_height="250dp" />
+
+    </LinearLayout>
+</RelativeLayout>
