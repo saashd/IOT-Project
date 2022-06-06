@@ -13,6 +13,7 @@ import com.example.project72471.Hydration.HydrationSettingActivity;
 import com.example.project72471.Hydration.HydrationTrackerActivity;
 import com.example.project72471.MainActivity;
 import com.example.project72471.PersonalDetails.PersonalDetailsFragment;
+import com.example.project72471.Statistics.StatisticsFragment;
 import com.example.project72471.TrainingActivity;
 import com.project72471.R;
 
@@ -30,8 +31,10 @@ public class OptionsMenuActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.bt_settings) {
             Intent intent = new Intent();
+            intent.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
             startActivity(intent);
             return true;
+//            TODO: check what is broken
         } else if (id == R.id.load1) {
             Fragment fragmentCSV = new CsvFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.activity_training, fragmentCSV, "terminal").addToBackStack(null).commit();
@@ -59,7 +62,14 @@ public class OptionsMenuActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.activity_training, fragmentDetails, "terminal").addToBackStack(null).commit();
             return true;
 
-        }else if (id == R.id.logout) {
+        }
+        else if(id==R.id.statistics) {
+            Fragment fragmentDetails = new StatisticsFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.activity_training, fragmentDetails, "terminal").addToBackStack(null).commit();
+            return true;
+        }
+
+        else if (id == R.id.logout) {
             Intent intent
                     = new Intent(OptionsMenuActivity.this,
                     MainActivity.class);
