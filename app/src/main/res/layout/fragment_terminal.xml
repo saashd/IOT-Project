@@ -1,199 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
-    android:layout_gravity="center"
+    android:background="@color/white"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_marginTop="150dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+
+
+    <include layout="@layout/toolbar_layout" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:orientation="vertical">
+        android:layout_marginTop="70dp">
 
         <LinearLayout
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="15dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/custom_border"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal">
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/custom_border"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="150dp"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed"
-                        android:text="@string/bpm_value"
-                        android:textAlignment="center"
-                        android:textAllCaps="false" />
+                        android:layout_gravity="center"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/bpm"
-                        android:layout_width="150dp"
+                        <TextView
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-condensed"
+                            android:text="@string/bpm_value"
+                            android:textAlignment="center"
+                            android:textAllCaps="false" />
+
+                        <TextView
+                            android:id="@+id/bpm"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-condensed"
+                            android:textAlignment="center"
+                            android:textAllCaps="false" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed"
-                        android:textAlignment="center"
-                        android:textAllCaps="false" />
+                        android:layout_gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-condensed"
+                            android:text="@string/spo_value"
+                            android:textAlignment="center"
+                            android:textAllCaps="false" />
+
+                        <TextView
+                            android:id="@+id/spo"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-condensed"
+                            android:textAlignment="center"
+                            android:textAllCaps="false" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="sans-serif-condensed"
+                    android:text="@string/steps_tracked"
+                    android:textAlignment="center"
+                    android:textAllCaps="false" />
+
+                <TextView
+                    android:id="@+id/estimatedSteps"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textAlignment="center"
+                    android:textAllCaps="false" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/receive_text"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+
+                android:layout_marginTop="10dp"
+
+                android:freezesText="true"
+                android:scrollbars="vertical"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/line_chart"
+                android:layout_width="match_parent"
+                android:layout_height="150dp" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/startButton"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="0.0dip"
+                        android:layout_height="fill_parent"
+                        android:layout_marginHorizontal="30dp"
+                        android:layout_weight="1.0"
+                        android:background="@color/colorPrimary"
+                        android:text="@string/startBtn"
+                        android:textColor="@android:color/white" />
+
+                    <Button
+                        android:id="@+id/stopButton"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width=".0dip"
+                        android:layout_height="fill_parent"
+                        android:layout_marginHorizontal="30dp"
+                        android:layout_weight="1.0"
+                        android:background="@color/colorPrimary"
+                        android:text="@string/stopBtn"
+                        android:textColor="@android:color/white" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="vertical">
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="150dp"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed"
-                        android:text="@string/spo_value"
-                        android:textAlignment="center"
-                        android:textAllCaps="false" />
+                    <Button
+                        android:id="@+id/saveButton"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width=".0dip"
+                        android:layout_height="fill_parent"
+                        android:layout_marginHorizontal="30dp"
+                        android:layout_weight="1.0"
+                        android:background="@color/colorPrimary"
+                        android:text="@string/saveBtn"
+                        android:textColor="@android:color/white" />
 
-                    <TextView
-                        android:id="@+id/spo"
-                        android:layout_width="150dp"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed"
-                        android:textAlignment="center"
-                        android:textAllCaps="false" />
+                    <Button
+                        android:id="@+id/resetButton"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="0.0dip"
+                        android:layout_height="fill_parent"
+                        android:layout_marginHorizontal="30dp"
+                        android:layout_weight="1.0"
+                        android:background="@color/colorAccent"
+                        android:text="@string/resetBtn"
+                        android:textColor="@android:color/white" />
                 </LinearLayout>
-
-
             </LinearLayout>
 
-            <TextView
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:fontFamily="sans-serif-condensed"
-                android:text="@string/steps_tracked"
-                android:textAlignment="center"
-                android:textAllCaps="false" />
-
-            <TextView
-                android:id="@+id/estimatedSteps"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:fontFamily="sans-serif-condensed"
-                android:textAlignment="center"
-                android:textAllCaps="false" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/receive_text"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="10dp"
-
-            android:freezesText="true"
-            android:scrollbars="vertical"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/line_chart"
-            android:layout_width="match_parent"
-            android:layout_height="150dp" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="?android:attr/listDivider" />
 
             <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:id="@+id/child_fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/startButton"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="0.0dip"
-                    android:layout_height="fill_parent"
-                    android:layout_marginHorizontal="30dp"
-                    android:layout_weight="1.0"
-                    android:background="@color/colorPrimary"
-                    android:text="@string/startBtn"
-                    android:textColor="@android:color/white" />
-
-                <Button
-                    android:id="@+id/stopButton"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width=".0dip"
-                    android:layout_height="fill_parent"
-                    android:layout_marginHorizontal="30dp"
-                    android:layout_weight="1.0"
-                    android:background="@color/colorPrimary"
-                    android:text="@string/stopBtn"
-                    android:textColor="@android:color/white" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/saveButton"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width=".0dip"
-                    android:layout_height="fill_parent"
-                    android:layout_marginHorizontal="30dp"
-                    android:layout_weight="1.0"
-                    android:background="@color/colorPrimary"
-                    android:text="@string/saveBtn"
-                    android:textColor="@android:color/white" />
-
-                <Button
-                    android:id="@+id/resetButton"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="0.0dip"
-                    android:layout_height="fill_parent"
-                    android:layout_marginHorizontal="30dp"
-                    android:layout_weight="1.0"
-                    android:background="@color/colorAccent"
-                    android:text="@string/resetBtn"
-                    android:textColor="@android:color/white" />
-            </LinearLayout>
         </LinearLayout>
+    </ScrollView>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="?android:attr/listDivider" />
-
-        <LinearLayout
-            android:id="@+id/child_fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-</ScrollView>
+</RelativeLayout>
 

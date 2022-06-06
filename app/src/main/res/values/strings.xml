@@ -37,4 +37,36 @@
     <string name="api_key">AIzaSyBh-G8bIDZAZo3cDYnYvDplz5m6R2qn5Ns</string>
 
 
+    <string name="bigText_glass">Drink!</string>
+    <string name="drink_water">NotificationDrinkWaterService</string>
+    <string name="bigText_updatePiechart">updatePiechart</string>
+    <string name="start_hour">start_hour</string>
+    <string name="start_min">start_min</string>
+    <string name="end_hour">end_hour</string>
+    <string name="end_min">end_min</string>
+    <string name="notification_interval">notification_interval</string>
+    <string name="quantity">quantity</string>
+    <string name="glass_size">glass_size</string>
+    <string name="total_consumption">total_consumption</string>
+    <string name="notify_turned_on">notify_turned_on</string>
+
+    <string-array name="notification_interval_array">
+        <item>1</item>
+        <item>5</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>60</item>
+    </string-array>
+
+    <string-array name="glass_size_array">
+        <item>100</item>
+        <item>150</item>
+        <item>200</item>
+        <item>300</item>
+        <item>400</item>
+        <item>500</item>
+    </string-array>
+
 </resources>

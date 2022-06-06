@@ -4,15 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
-    tools:context=".CsvFragment">
+    tools:context="com.example.project72471.CsvFragment">
 
     <Spinner
         android:id="@+id/csvSpinner"
         android:layout_width="215dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="250dp" />
+        android:layout_marginBottom="250dp"
+        android:backgroundTint="@color/colorPrimary" />
 
 
     <Button
@@ -43,12 +45,12 @@
         android:text="ACTIVITY TYPE:" />
 
     <TextView
-    android:id="@+id/steps"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:layout_marginBottom="100dp"
-    android:text="COUNT OF ACTUAL STEPS:" />
+        android:id="@+id/steps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="100dp"
+        android:text="COUNT OF ACTUAL STEPS:" />
 
     <TextView
         android:id="@+id/estimatedSteps"

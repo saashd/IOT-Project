@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".TrainingActivity">
+    tools:context="com.example.project72471.TrainingActivity">
 
     <include layout="@layout/toolbar_layout" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

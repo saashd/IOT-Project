@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.tutorial6" >
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.project72471">
 
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -12,6 +13,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:icon="@mipmap/ic_launcher"
@@ -19,15 +21,19 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat" >
+        android:theme="@style/Theme.AppCompat">
+
+        <service android:name="com.example.project72471.Hydration.ReminderService"/>
+
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.project72471.MainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name="com.example.project72471.LogIn.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".LogIn.LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".LogIn.RegistrationActivity"
+            android:name="com.example.project72471.LogIn.RegistrationActivity"
             android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
@@ -48,10 +54,10 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".StartScreenActivity"
+            android:name="com.example.project72471.StartScreenActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:windowSoftInputMode="stateHidden|adjustResize" >
+            android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,12 +65,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TrainingActivity"
+            android:name="com.example.project72471.TrainingActivity"
             android:exported="false"
             android:label="@string/title_activity_home"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
-        <service android:name=".Serial.SerialService" />
+        <service android:name="com.example.project72471.Serial.SerialService" />
+
     </application>
 
 </manifest>
