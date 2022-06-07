@@ -97,6 +97,26 @@
                 android:gravity="center"
                 android:inputType="number" />
 
+
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+
+                android:ems="10"
+                android:gravity="center"
+                android:text="@string/emergency"/>
+
+            <EditText
+                android:id="@+id/emergency"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/colorPrimary"
+                android:ems="10"
+                android:gravity="center"
+                android:inputType="textEmailAddress"/>
+
             <Button
                 android:id="@+id/applyButton"
                 android:layout_width="wrap_content"

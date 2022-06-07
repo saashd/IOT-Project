@@ -25,12 +25,14 @@ import com.project72471.R;
 
 public class PersonalDetailsFragment extends Fragment {
 
-    private String gender;
     private EditText age;
     private EditText height;
     private EditText weight;
+    private EditText emergency;
     public Integer maxHR;
     public double bmi;
+    private String gender;
+    private String emergencyEmail;
     private int ageVal;
     private int heightVal;
     private int weightVal;
@@ -58,7 +60,7 @@ public class PersonalDetailsFragment extends Fragment {
         age = (EditText) view.findViewById(R.id.age);
         height = (EditText) view.findViewById(R.id.height);
         weight = (EditText) view.findViewById(R.id.weight);
-
+        emergency = (EditText) view.findViewById(R.id.emergency);
         Spinner genderSpinner = view.findViewById(R.id.genderSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.gender_array, R.layout.support_simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
@@ -103,6 +105,11 @@ public class PersonalDetailsFragment extends Fragment {
                     weightVal = ((Long) data).intValue();
                     weight.setText(String.valueOf(weightVal));
                 }
+                data = dataSnapshot.child("emergencyContact").getValue();
+                if (data != null) {
+                    emergencyEmail = (String) data;
+                    emergency.setText(String.valueOf(emergencyEmail));
+                }
 
             }
 
@@ -129,6 +136,7 @@ public class PersonalDetailsFragment extends Fragment {
                 reference.child("weightVal").setValue(weightVal);
                 reference.child("maxHR").setValue(maxHR);
                 reference.child("bmi").setValue(bmi);
+                reference.child("emergencyContact").setValue(emergency.getText().toString());
 
                 Bundle args = new Bundle();
                 args.putString("maxHR", String.valueOf(maxHR));
