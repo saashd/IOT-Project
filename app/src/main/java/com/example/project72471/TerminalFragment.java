@@ -4,7 +4,6 @@ package com.example.project72471;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
@@ -13,10 +12,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.telephony.SmsManager;
 import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -61,7 +62,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.opencsv.CSVWriter;
 import com.project72471.R;
-
 
 import java.io.File;
 import java.io.FileWriter;
@@ -279,6 +279,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         Button buttonSaveData = (Button) view.findViewById(R.id.saveButton);
         Button buttonStop = (Button) view.findViewById(R.id.stopButton);
         Button buttonStart = (Button) view.findViewById(R.id.startButton);
+
 
         buttonStart.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
@@ -626,7 +627,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 displayBPM.setText(String.valueOf(avgBpm));
 
             }
-            if (popUpDialog && !popUpStarted && avgBpm > 50) {
+            if (popUpDialog && !popUpStarted && avgBpm > 150) {
                 popUpStarted = true;
                 PopUpWindow();
             }
@@ -647,6 +648,9 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
 
     private void PopUpWindow() {
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Ringtone r = RingtoneManager.getRingtone(getContext(), notification);
+        r.play();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final TextView text = new TextView(getActivity());
         text.setText("You Heart Rate is Critical!\n Do You want to notify Your Emergency Contact ");
@@ -661,6 +665,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @RequiresApi(api = Build.VERSION_CODES.O)
                     public void onClick(DialogInterface dialog, int id) {
+                        r.stop();
 
                         pauseReceiving();
                         MyLocation currLocation = childFragment.getCurrentLocation();
@@ -698,6 +703,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        r.stop();
                         //  Action for 'NO' Button
                         dialog.cancel();
                         popUpDialog = false;
