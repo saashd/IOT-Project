@@ -34,7 +34,6 @@ public class OptionsMenuActivity extends AppCompatActivity {
             intent.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
             startActivity(intent);
             return true;
-//            TODO: check what is broken
         } else if (id == R.id.load1) {
             Fragment fragmentCSV = new CsvFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.activity_training, fragmentCSV, "terminal").addToBackStack(null).commit();

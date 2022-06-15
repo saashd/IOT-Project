@@ -25,7 +25,6 @@ import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
-import com.project72471.R;
 import com.example.project72471.Serial.SerialService;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -45,6 +44,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.ui.IconGenerator;
+import com.project72471.R;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -76,8 +76,6 @@ public class MapsFragment extends Fragment implements LocationListener, TaskLoad
     private List<Polyline> polylines = null;
 
     private SupportMapFragment mapFragment;
-
-
 
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
@@ -113,7 +111,7 @@ public class MapsFragment extends Fragment implements LocationListener, TaskLoad
         myView = view;
 
 
-        fileName=DateFormat.getDateTimeInstance().format(new Date());
+        fileName = DateFormat.getDateTimeInstance().format(new Date());
 
 
         manager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
@@ -143,6 +141,11 @@ public class MapsFragment extends Fragment implements LocationListener, TaskLoad
 
 
     }
+
+    public MyLocation getCurrentLocation() {
+        return mCurrentLocation;
+    }
+
 
     private void getLocationUpdates() {
         Location location = null;

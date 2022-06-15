@@ -12,6 +12,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -40,6 +43,7 @@ import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
 import com.example.project72471.LocationTracker.MapsFragment;
+import com.example.project72471.LocationTracker.MyLocation;
 import com.example.project72471.Serial.SerialListener;
 import com.example.project72471.Serial.SerialService;
 import com.example.project72471.Serial.SerialSocket;
@@ -51,11 +55,13 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.opencsv.CSVWriter;
 import com.project72471.R;
-
 
 import java.io.File;
 import java.io.FileWriter;
@@ -98,9 +104,13 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private PyObject pyobjcalcStepsAlgo;
 
     private DatabaseReference reference;
+    private String userUid;
     private String todayDate;
     private Instant startRec;
     private Instant endRec;
+    private boolean popUpDialog = true;
+    private boolean popUpStarted = false;
+    private MapsFragment childFragment;
 
 
     private enum Connected {False, Pending, True;}
@@ -141,6 +151,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         setHasOptionsMenu(true);
         setRetainInstance(true);
 
+
         if (!Python.isStarted()) {
             Python.start(new AndroidPlatform(getContext()));
         }
@@ -150,7 +161,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         pyobjTest = py.getModule("test");
         pyobjcalcStepsAlgo = py.getModule("calcStepsAlgo");
 
-        String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         todayDate = DateFormat.getDateTimeInstance().format(new Date());
         reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userUid).child(todayDate);
 
@@ -269,6 +280,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         Button buttonStop = (Button) view.findViewById(R.id.stopButton);
         Button buttonStart = (Button) view.findViewById(R.id.startButton);
 
+
         buttonStart.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @SuppressLint("SetTextI18n")
@@ -281,10 +293,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
 //TODO: Run code only if really needed, my billing account won't make it till presentation.
                     Bundle args = new Bundle();
-                    MapsFragment childFragment = new MapsFragment();
+                    childFragment = new MapsFragment();
                     childFragment.setArguments(args);
                     FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
                     transaction.replace(R.id.child_fragment_container, childFragment).addToBackStack("map").commit();
+
 
                     if (!isReceiving) {
                         isReceiving = true;
@@ -614,6 +627,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 displayBPM.setText(String.valueOf(avgBpm));
 
             }
+            if (popUpDialog && !popUpStarted && avgBpm > 150) {
+                popUpStarted = true;
+                PopUpWindow();
+            }
+
         }
 
     }
@@ -626,6 +644,75 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             displaySPO2.setText(String.valueOf((int) Math.round(ESpO2)));
 
         }
+    }
+
+
+    private void PopUpWindow() {
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Ringtone r = RingtoneManager.getRingtone(getContext(), notification);
+        r.play();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final TextView text = new TextView(getActivity());
+        text.setText("You Heart Rate is Critical!\n Do You want to notify Your Emergency Contact ");
+
+
+        LinearLayout lay = new LinearLayout(getContext());
+        lay.setOrientation(LinearLayout.VERTICAL);
+        lay.addView(text);
+
+        builder.setView(lay)
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.O)
+                    public void onClick(DialogInterface dialog, int id) {
+                        r.stop();
+
+                        pauseReceiving();
+                        MyLocation currLocation = childFragment.getCurrentLocation();
+                        FirebaseDatabase.getInstance().getReference().child("Users").child(userUid).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                String emergencyContact = "";
+                                Object data = dataSnapshot.child("emergencyContact").getValue();
+                                if (data != null) {
+                                    emergencyContact = (String) data;
+                                }
+
+                                Intent email = new Intent(Intent.ACTION_SEND);
+                                email.putExtra(Intent.EXTRA_EMAIL, new String[]{emergencyContact});
+                                email.putExtra(Intent.EXTRA_SUBJECT, "Emergency");
+                                email.putExtra(Intent.EXTRA_TEXT, "My Current Location is: \n\n latitude: " + currLocation.getLatitude() + "\n longitude: " + currLocation.getLongitude() + "\n\n Current Heart Rate is: " + avgBpm + " bpm");
+                                email.setType("message/rfc822");
+                                startActivity(Intent.createChooser(email, "Send mail..."));
+
+                                dialog.cancel();
+                                popUpDialog = false;
+                                popUpStarted = false;
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        r.stop();
+                        //  Action for 'NO' Button
+                        dialog.cancel();
+                        popUpDialog = false;
+                        popUpStarted = false;
+                    }
+                });
+        //Creating dialog box
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
 
