@@ -15,6 +15,7 @@ import com.example.project72471.MainActivity;
 import com.example.project72471.PersonalDetails.PersonalDetailsFragment;
 import com.example.project72471.Statistics.StatisticsFragment;
 import com.example.project72471.TrainingActivity;
+import com.google.firebase.auth.FirebaseAuth;
 import com.project72471.R;
 
 
@@ -69,6 +70,7 @@ public class OptionsMenuActivity extends AppCompatActivity {
         }
 
         else if (id == R.id.logout) {
+            FirebaseAuth.getInstance().signOut();
             Intent intent
                     = new Intent(OptionsMenuActivity.this,
                     MainActivity.class);
