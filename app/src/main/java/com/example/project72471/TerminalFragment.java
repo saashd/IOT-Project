@@ -581,7 +581,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         int irVal = Integer.parseInt(ir);
         int redVal = Integer.parseInt(red);
         if (irVal > 5000) {
-            double frate = 0.33; //low pass filter for IR/red LED value to eliminate AC component
+            double frate = 0.95; //low pass filter for IR/red LED value to eliminate AC component
             avgIr = lowPassFilter(irVal, avgIr, sumIrRms, frate)[0];
             sumIrRms = lowPassFilter(irVal, avgIr, sumIrRms, frate)[1];
             avgRed = lowPassFilter(redVal, avgRed, sumRedRms, frate)[0];

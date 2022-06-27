@@ -44,14 +44,15 @@ public class HealthDetailsFragment extends Fragment {
 
 
     public String bmiRange() {
+        String val = String.format("%.2f", bmi);
         if (bmi <= 18.5) {
-            return "Your BMI is \n"+bmi+"\n You're in the underweight range";
+            return "Your BMI is \n"+val+"\n You're in the underweight range";
         } else if (18.5 < bmi && bmi <= 24.9) {
-            return "Your BMI is \n"+bmi+"\n You're in the healthy weight range";
+            return "Your BMI is \n"+val+"\n You're in the healthy weight range";
         } else if (24.9 < bmi && bmi <= 29.9) {
-            return "Your BMI is \n"+bmi+"\n You're in the overweight range";
+            return "Your BMI is \n"+val+"\n You're in the overweight range";
         } else {
-            return "Your BMI is \n"+bmi+"\n You're in the obese range";
+            return "Your BMI is \n"+val+"\n You're in the obese range";
         }
     }
 }
